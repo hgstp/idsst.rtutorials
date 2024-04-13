@@ -6,7 +6,7 @@ Authors@R: c(
     person("Till", "Abitz",  role = c("aut")))
 Description: The tutorials were created by the RStudio Education team and publish
     under CC BY-NC-ND 3.0. We changed the name of all tutorials and adjusted the links 
-    all vimeo videos.
+    for all vimeo videos.
 License: CC BY-NC-ND 4.0
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
