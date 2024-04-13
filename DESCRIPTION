@@ -1,0 +1,21 @@
+Package: idsst.rtutorials
+Title: R tutorials for IDSST
+Version: 0.0.1
+Authors@R: c(
+    person("Stephan", "Haug", email = "haug@tum.de", role = c("aut", "cre")),
+    person("Till", "Abitz",  role = c("aut")))
+Description: The tutorials were created by the RStudio Education team and publish
+    under CC BY-NC-ND 3.0. We changed the name of all tutorials and adjusted the links 
+    all vimeo videos.
+License: CC BY-NC-ND 4.0
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Suggests: 
+    learnr
+Imports: 
+    babynames,
+    ggrepel,
+    hexbin,
+    mapproj,
+    maps

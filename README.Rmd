@@ -1,0 +1,46 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# idsst.rtutorials
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+`idsst.rtutorials` contains the R tutorials
+
++ bar-charts
++ boxplots
++ cusomize
++ deriving
++ exploratory-data-analysis
++ histograms
++ isolating
++ line-graphs
++ overplotting
++ programming-basics
++ scatterplots
++ tibbles
++ visualization-basics
+
+
+## Installation
+
+You can install the development version of idsst.rtutorials from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("hgstp/idsst.rtutorials")
+```
+
