@@ -10,7 +10,7 @@
 
 - bar-charts
 - boxplots
-- cusomize
+- customize
 - deriving
 - exploratory-data-analysis
 - histograms

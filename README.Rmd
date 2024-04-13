@@ -22,7 +22,7 @@ knitr::opts_chunk$set(
 
 + bar-charts
 + boxplots
-+ cusomize
++ customize
 + deriving
 + exploratory-data-analysis
 + histograms
