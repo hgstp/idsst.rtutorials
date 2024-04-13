@@ -28,6 +28,6 @@ You can install the development version of idsst.rtutorials from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("hgstp/idsst.rtutorials")
+# install.packages("remotes")
+remotes::install_github("hgstp/idsst.rtutorials")
 ```
