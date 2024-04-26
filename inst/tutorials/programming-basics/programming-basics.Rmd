@@ -94,7 +94,7 @@ Wow! `lm()` runs a lot of code. What does it do? Open the help page for `lm()` i
 
 ### Code comments
 
-What do you think the chunk below will return? Run it and see. The result should be nothing. R will not run anything on a line after a `#` symbol. This is useful because it lets you write human readable comments in your code: just place the comments after a `#`. Now delete the `#` and re-run the chunk. You should see a result.
+What do you think the chunk below will return? Run it and see. The result should be nothing. R will not run anything on a line after a `#` symbol. This is useful because it lets you write human-readable comments in your code: place them after a `#`. Now delete the `#` and re-run the chunk. You should see a result.
 
 ```{r functions-5, exercise = TRUE}
 # sqrt(961)
@@ -147,7 +147,7 @@ Use `rnrom()` to generate 100 random normal values with a mean of 100 and a stan
 ```
 
 ```{r arguments-3-solution}
-rnorm(100, mean = 100, sd = 50)
+rnorm(100, mean = 100, sd = 15)
 ```
 
 ### rnorm() 2
@@ -155,11 +155,11 @@ rnorm(100, mean = 100, sd = 50)
 Can you spot the error in the code below? Fix the code and then re-run it.
 
 ```{r arguments-4, exercise = TRUE}
-rnorm(100, mu = 100, sd = 50)
+rnorm(100, mu = 100, sd = 15)
 ```
 
 ```{r arguments-4-solution}
-rnorm(100, mean = 100, sd = 50)
+rnorm(100, mean = 100, sd = 15)
 ```
 
 ## Objects
@@ -252,7 +252,7 @@ iris
 ```
 
 ```{r objects-5-check}
-"Great work! However, please keep in mind that using the `rm()` function won't be helpful if you accidentally overwrite one of your own objects."
+"Great work! However, please remember that using the `rm()` function won't be helpful if you accidentally overwrite one of your own objects."
 ```
 
 ## Vectors
@@ -287,7 +287,7 @@ If your vector contains a sequence of contiguous integers, you can create it wit
 
 ### []
 
-You can extract any element of a vector by placing a pair of brackets behind the vector. Inside the brackets place the number of the element that you'd like to extract. For example, `vec[3]` would return the third element of the vector named `vec`.
+You can extract any element of a vector by placing a pair of brackets behind the vector. Place the number of the element you'd like to extract inside the brackets. For example, `vec[3]` would return the third element of the vector named `vec`.
 
 Use the chunk below to extract the fourth element of `vec`.
 
@@ -316,7 +316,7 @@ vec[c(1,2,5)]
 
 ### Names
 
-If the elements of your vector have names, you can extract them by name. To do so place a name or vector of names in the brackets behind a vector. Surround each name with quotation marks, e.g. `vec2[c("alpha", "beta")]`.
+If the elements of your vector have names, you can extract them by name. Place a name or vector of names in the brackets behind a vector to do so. Surround each name with quotation marks, e.g. `vec2[c("alpha", "beta")]`.
 
 Extract the element named gamma from the vector below.
 
@@ -331,19 +331,19 @@ vec2["gamma"]
 
 ### Vectorised operations
 
-Predict what the code below will return. Then look at the result.
+Predict what the code below will return. Then, look at the result.
 
 ```{r vectors-6, exercise = TRUE}
 c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) + c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 ```
 
 ```{r vectors-6-check}
-"Good job! Like many R functions, R's math operators are vectorised: they're designed to work with vectors by repeating the operation for each pair of elements."
+"Good job! Like many R functions, R's math operators are vectorized: they're designed to work with vectors by repeating the operation for each pair of elements."
 ```
 
 ### Vector recycling
 
-Predict what the code below will return. Then look at the result.
+Predict what the code below will return. Then, look at the result.
 
 ```{r vectors-7, exercise = TRUE}
 1 + c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -401,7 +401,7 @@ c(1L, 2L, 3L, 4L, 5L)
 
 Computers must use a finite amount of memory to store decimal numbers (which can sometimes require infinite precision). As a result, some decimals can only be saved as very precise approximations. From time to time you'll notice side effects of this imprecision, like below.
 
-Compute the square root of two,square the answer (e.g. multiply the square root of two by the square root of two), and then subtract two from the result. What answer do you expect? What answer do you get?
+Compute the square root of two, square the answer (e.g., multiply the square root of two by the square root of two), and then subtract two from the result. What answer do you expect? What answer do you get?
 
 ```{r types4, exercise = TRUE}
 
@@ -481,7 +481,7 @@ things$number
 
 ### Data Frames
 
-You can make a data frame with the `data.frame()` function, which works similar to `c()`, and `list()`. Assemble the vectors below into a data frame with the column names `numbers`, `logicals`, `strings`.
+You can make a data frame with the `data.frame()` function, which works similarly to `c()` and `list()`. Assemble the vectors below into a data frame with the column names `numbers`, `logicals`, and `strings`.
 
 ```{r lists4, exercise = TRUE}
 nums <- c(1, 2, 3, 4)
@@ -534,7 +534,7 @@ question('What does this common error message suggest? `object _____ does not ex
 
 ### Load a package
 
-In the code chunk below, load the `tidyverse` package. Whenever you load a package R will also load all of the packages that the first package depends on.
+In the code chunk below, load the `tidyverse` package. Whenever you load a package R will also load all the packages that the first package depends on.
 
 ```{r packages2, exercise = TRUE}
 
@@ -574,7 +574,7 @@ install.packages("dplyr")
 
 ### The tidyverse package
 
-The ["tidyverse packages"](http://tidyverse.org) are a set of packages, that share a common philosophy and are designed to work well together. When you use tidyverse packages, you can make your life easier by using the **tidyverse** package. The tidyverse package provides a shortcut for installing and loading the entire suite of packages in "the tidyverse", e.g. 
+The ["tidyverse packages"](http://tidyverse.org) are a set of packages that share a common philosophy and are designed to work well together. When you use tidyverse packages, you can make your life easier by using the **tidyverse** package. The tidyverse package provides a shortcut for installing and loading the entire suite of packages in "the tidyverse", e.g., 
 
 ```{r eval = FALSE}
 install.packages("tidyverse")
@@ -603,6 +603,7 @@ Think of the **tidyverse** package as a placeholder for the packages that are in
 * xml2
 * modelr
 * broom
+* ...
 
 ### loading the tidyverse
 
@@ -614,8 +615,11 @@ When you load tidyverse with `library("tidyverse")`, it instructs R to load _the
 * readr
 * purrr
 * tibble
+* forcats
+* lubridate
+* stringr
 
-You can load the less commonly used tidyverse packages in the normal way, by running `library(<PACKAGE NAME>)` for each of them.
+You can load the less commonly used tidyverse packages in the usual way by running `library(<PACKAGE NAME>)` for each of them.
 
 Let's give this a try. We will use the ggplot2 and dplyr packages later in this tutorial. Let's use the tidyverse package to load them in the chunk below:
 
@@ -641,4 +645,4 @@ question('Which package is not loaded by `library("tidyverse")`',
 
 ### Congratulations!
 
-Congratulations. You now have a formal sense for how the basics of R work. Although you may think of your self as a Data Scientist, this brief Computer Science background will help you as you analyze data. Whenever R does something unexpected, you can apply your knowledge of how R works to figure out what went wrong.
+Congratulations. You now have a formal sense of how the basics of R work. Although you may think of yourself as a Data Scientist, this brief Computer Science background will help you as you analyze data. Whenever R does something unexpected, you can apply your knowledge of how R works to figure out what went wrong.

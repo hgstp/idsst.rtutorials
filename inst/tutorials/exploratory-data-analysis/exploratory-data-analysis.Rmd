@@ -36,17 +36,17 @@ The tutorial is excerpted from _R for Data Science_ by Hadley Wickham and Garret
 
 EDA is an approach to analyzing data sets to summarize their main characteristics. When you do EDA, you:
 
-1. Generate questions about your data
+1. Generate questions about your data.
 
-1. Search for answers by visualising, transforming, and/or modeling your data
+1. Search for answers by visualizing, transforming, and/or modeling your data.
 
-1. Use what you learn to refine your questions and/or generate new questions
+1. Use what you learn to refine your questions and/or generate new questions.
 
-EDA is an important part of any data analysis. You can use EDA to make discoveries about the world; or you can use EDA to ensure the quality of your data, asking questions about whether the data meets your standards or not.
+EDA is an important part of any data analysis. You can use EDA to make discoveries about the world, or you can use EDA to ensure the quality of your data by asking questions about whether the data meets your standards or not.
 
 ### The EDA mindset
 
-EDA is not a formal process with a strict set of rules. More than anything, EDA is a state of mind. During the initial phases of EDA, you should feel free to investigate every idea that occurs to you. Some of these ideas will pan out, and some will be dead ends. As your exploration continues, you will home in on lines of inquiry that reveal insights worth writing up and communicating to others.
+EDA is not a formal process with a strict set of rules. More than anything, EDA is a state of mind. During the initial phases of EDA, you should feel free to investigate every idea that occurs to you. Some of these ideas will pan out, and some will be dead ends. As your exploration progresses, you will gain insights that are worth writing down and passing on to others.
 
 ### Questions
 
@@ -58,7 +58,7 @@ Your goal during EDA is to develop an understanding of your data. The easiest wa
 
 ### Quantity vs Quality
 
-EDA is, fundamentally, a creative process. And like most creative processes, the key to asking _quality_ questions is to generate a large _quantity_ of questions. It is difficult to ask revealing questions at the start of your analysis because you do not know what insights are contained in your dataset. On the other hand, each new question that you ask will highlight a new aspect of your data and increase your chance of making a discovery. You can quickly drill down into the most interesting parts of your data---and develop a set of thought-provoking questions---if you follow up each question with a new question based on what you find.
+EDA is, fundamentally, a creative process. And like most creative processes, the key to asking _quality_ questions is to generate a large _quantity_ of questions. It is challenging to ask revealing questions at the start of your analysis because you do not know what insights are contained in your dataset. On the other hand, each new question that you ask will highlight a new aspect of your data and increase your chance of making a discovery. You can quickly drill down into the most interesting parts of your data---and develop a set of thought-provoking questions---if you follow up each question with a new question based on what you find.
 
 > "There are no routine statistical questions, only questionable statistical
 > routines." --- Sir David Cox
@@ -150,7 +150,7 @@ quiz(caption = "Variables, values, and observations",
 
 **Variation** is the tendency of the values of a variable to change from measurement to measurement. You can see variation easily in real life; if you measure any continuous variable twice---and precisely enough---you will get two different results. This is true even if you measure quantities that are constant, like the speed of light. Each of your measurements will include a small amount of error that varies from measurement to measurement. Categorical variables can also vary if you measure across different objects (e.g. the eye colors of different people), or different times (e.g. the energy levels of an electron at different moments). 
 
-Every variable has its own pattern of variation, which can reveal useful information. The best way to understand that pattern is to visualise the distribution of the variable's values. How you visualise the distribution of a variable will depend on whether the variable is **categorical** or **continuous**. 
+Every variable has its own pattern of variation, which can reveal useful information. The best way to understand that pattern is to visualize the distribution of the variable's values. How you visualize the distribution of a variable will depend on whether the variable is **categorical** or **continuous**. 
 
 ### Categorical variables
 
@@ -162,13 +162,13 @@ ggplot(data = mpg) +
   ggtitle("Classes of cars in mpg")
 ```
 
-Don't worry if you cannot make or interpret a bar chart. We'll survey several types of charts in this tutorial, as we create a strategy for EDA. You'll learn how to build each type of chart in the tutorials that follow.
+Don't worry if you cannot make or interpret a bar chart. In this tutorial, we'll survey several types of charts as we create a strategy for EDA. You'll learn how to build each type of chart in the following tutorials.
 
 ### Continuous variables
 
-A variable is **continuous** if it can take any of an infinite set of smooth, ordered values. Here, smooth means that if you order the values on a line, an infinite number of values would exist between any two points on the line. For example, an infinite number of values exists between 0 and 1, e.g. 0.9, 0.99, 0.999, and so on.
+A variable is **continuous** (numeric) if it can take any of an infinite set of smooth, ordered values. Here, smooth means that if you order the values on a line, an infinite number of values would exist between any two points on the line. For example, an infinite number of values exists between 0 and 1, e.g. 0.9, 0.99, 0.999, and so on.
 
-Continuous variables are a special case of the so-calles **numerical** variables, which can take a wide range of numerical values, and it is sensible to add, subtract, or take averages with those values. A numerical variable, which is not continuous is called discrete.
+Continuous variables are a special case of the so-called **numerical** variables, which can take a wide range of numerical values, and it is sensible to add, subtract, or take averages with those values. A numerical variable that is not continuous is called discrete.
 
 Numbers and date-times are two examples of continuous variables. You can visualize the distribution of a continuous variable with a histogram, like the one below:
 
@@ -190,11 +190,11 @@ In both bar charts and histograms, tall bars show the common values of a variabl
 
 * Are there any **outliers**, which are points that don't fit the pattern or fall far away from the rest of the data? Are they the result of data entry errors or something else?
 
-Many of the questions above will prompt you to explore a relationship *between* variables, to see if the values of one variable can explain the values of another variable. We'll get to that shortly.
+Many of the questions above will prompt you to explore a relationship *between* variables to see if one variable's values can explain another variable's values. We'll get to that shortly.
 
 ### Review 4 - Frequencies
 
-The bar chart below visualises the distribution of the `class` variable in the `mpg` data set, which comes in the ggplot2 package. The height of the bars reveal how many cars in the data set come from each class. 
+The bar chart below visualizes the distribution of the `class` variable in the `mpg` data set, which comes in the ggplot2 package. The heights of the bars reveal how many cars in the dataset come from each class. 
 
 ```{r echo = FALSE, out.width = "100%"}
 ggplot(data = mpg) +
@@ -248,9 +248,9 @@ For continuous variables, clusters of similar values suggest that subgroups exis
 
 The histogram below shows the distribution of the `eruptions` variable in the `faithful` data set, which comes with R. `eruptions` shows the lengths (in minutes) of 272 eruptions of the Old Faithful geyser in Yellowstone National Park.
 
-To interpret the histogram, look first at the x axis, which displays the lengths of eruptions recorded in the data. The range of the x axis shows that the shortest eruptions lasted for about one minute and the longest for about five minutes. 
+To interpret the histogram, first look at the x-axis, which displays the lengths of eruptions recorded in the data. The range of the x-axis shows that the shortest eruptions lasted for about one minute and the longest for about five minutes. 
 
-To see how many eruptions lasted for a specific length of time, find the length of time on the x axis and then look at the height of the bar above the length of time. For example, according to the histogram, 30 eruptions lasted for about two minutes, but only three lasted for about three minutes (the height of the bar above two is 30, the height of the bar above three is three).
+To see how many eruptions lasted for a specific length of time, find the length of time on the x-axis and then look at the height of the bar above the length of time. For example, according to the histogram, 30 eruptions lasted for about two minutes, but only three lasted for about three minutes (the height of the bar above two is 30, and the height of the bar above three is three).
 
 ```{r echo = FALSE, message = FALSE, out.width = "100%"}
 ggplot(data = faithful) +
@@ -315,9 +315,9 @@ ggplot(data = faithful) +
 
 ### Patterns
 
-Patterns in your data provide clues about relationships. If a systematic relationship exists between two variables it will appear as a pattern in the data. If you spot a pattern, ask yourself:
+Patterns in your data provide clues about relationships. If a systematic relationship exists between two variables, it will appear as a pattern in the data. If you spot a pattern, ask yourself:
 
-+ Could this pattern be due to coincidence (i.e. random chance)?
++ Could this pattern be due to coincidence (i.e., random chance)?
 
 + How can you describe the relationship implied by the pattern?
 
@@ -327,11 +327,11 @@ Patterns in your data provide clues about relationships. If a systematic relatio
 
 + Does the relationship change if you look at individual subgroups of the data?
 
-Remember that clusters and outliers are also a type of pattern. Two dimensional plots can reveal clusters and outliers that would not be visible in a one dimensional plot. If you spot either, ask yourself what they imply.
+Remember that clusters and outliers are also a type of pattern. Two-dimensional plots can reveal clusters and outliers that would not be visible in a one-dimensional plot. If you spot either, ask yourself what they imply.
 
 ### Review 6 - Patterns
 
-The scatterplot below shows the relationship between the length of an eruption of Old Faithful and the wait time before the eruption (i.e. the amount of time that passed between it and the previous eruption).
+The scatterplot below shows the relationship between the length of an eruption of Old Faithful and the wait time before the eruption (i.e., the time that passed between it and the previous eruption).
 
 ```{r echo = FALSE, message = FALSE, out.width = "100%"}
 ggplot(data = faithful) +
@@ -367,14 +367,6 @@ Not every combination of values will have this property. For example, if you pai
 The correct combination of values to use will depend on the relationship that you are trying to discover. 
 
 
-### A note on observations
-
-Observations are one of the trickiest ideas in data science, but they are easy to understand in the light of covariation. As data scientists, we want to discover covariation, or more generally, the relationships between variables. Think of an observation as _a piece of evidence_ about a relationship between variables_. Here's how it works:
-
-An observation is a set of values, but not all sets of values are observations. To be an observation, a set of values needs to supply evidence about a relationship. This can only happen if the set of values has a specific property: _If a relationship exists between the variables that the values describe, then the relationship will also exist between the values themselves_. If this is true, then each observation will give us a glimpse of the relationship. If we visualize many observations, we can see the shape of the relationship---literally.
-
-Not every combination of values will have this property. For example, if you pair the wait time before a geyser eruption that occurs today with the length of a geyser eruption that occurs tomorrow, the combination will tell you little about the relationship between the wait time before an eruption and the length of the eruption.
-
 -->
 
 ### Recap
@@ -385,11 +377,11 @@ You've learned a lot in this tutorial. Here's what you should keep with you:
 * These two questions are always useful:
     1. What type of variation occurs _within_ my variables?
     1. What type of covariation occurs _between_ my variables?
-* Remember the definitions of _variables_, _values_, _observations_, _variation_, _covariation_, _categorical_, and _continuous_. You'll see them again. Frequently.
+* Remember the definitions of _variables_, _values_, _observations_, _variation_, _covariation_, _categorical_, and _numerical (continuous/discrete)_. You'll see them again. Frequently.
 
 Throughout the tutorial, you also encountered several recommendations for plots that visualize variation and covariation for categorical and continuous variables. Plots are a bit like questions in EDA: you should make many quickly and try anything that strikes your fancy. You can refine your plots later to share with others. A lot of refinement will occur naturally as you iterate during EDA. 
 
-The suggestions below can serve as starting point for visualizing data. In the tutorials that follow, you will learn how to make each type of plot, as well as how to use best practices and advanced skills when visualizing data.
+The suggestions below can serve as a starting point for visualizing data. In the following tutorials, you will learn how to make each type of plot and how to use best practices and advanced skills when visualizing data.
 
 ```{r echo = FALSE, out.width = "100%"}
 knitr::include_graphics("images/plots-table.png")

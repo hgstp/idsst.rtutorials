@@ -23,13 +23,13 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Welcome
 
-In this primer, you will explore the popularity of different names over time. To succeed, you will need to master the following tool for manipulating data with R:
+In this tutorial, you will explore the popularity of different names over time. To succeed, you will need to master the following tool for manipulating data with R:
 
 * tibbles and `View()`, which let you inspect raw data
 
 In this tutorial, we'll use a dataset named `babynames`, which comes in a package that is also named `babynames`. Within `babynames`, you will find information about almost every name given to children in the United States since 1880. 
 
-This tutorial introduces `babynames` as well as a new data structure that makes working with data in R easy: the tibble.
+This tutorial introduces `babynames` and a new data structure that makes working with data in R easy: the tibble.
 
 In addition to `babynames`, this tutorial uses the [core tidyverse packages](http://tidyverse.org/), including ggplot2, tibble, and dplyr. All of these packages have been pre-installed for your convenience. But they haven't been pre-loaded.
 
@@ -39,9 +39,9 @@ Click the Next Topic button to begin.
 
 ### Loading babynames
 
-Before we begin, let's learn a little about our data. The `babynames` dataset comes in the **babynames** package. The package is pre-installed for you, just as ggplot2 was pre-installed in the last tutorial. But unlike in the last tutorial, I have not pre-_loaded_ babynames, or any other package.
+Before we begin, let's learn a little about our data. The `babynames` dataset comes in the **babynames** package. The package is defined as a dependency for `idsst.rtutorials` and was installed together with `idsst.rtutorials`. But I have not pre-_loaded_ babynames, or any other package for this tutorial.
 
-What does this mean? In R, whenever you want to use a package that is not part of base R, you need to load the package with the command `library()`. Until you load a package, R will not be able to find the datasets and functions contained in the package. For example, if we asked R to display the `babynames` dataset, which comes in the babynames package, right now, we'd get the message below. R cannot find the dataset because we haven't loaded the babynames package.
+What does this mean? In R, whenever you want to use a package that is not part of base R, you need to load the package with the command `library()`. Until you load a package, R cannot find the datasets and functions contained in the package. For example, if we asked R to display the `babynames` dataset, which comes in the babynames package, right now, we'd get the message below. R cannot find the dataset because we haven't loaded the babynames package.
 
 ```{r error = TRUE}
 babynames
@@ -49,7 +49,7 @@ babynames
 
 To load the `babynames` package, you would run the command `library(babynames)`. After you load a package, R will be able to find its contents _until you close R_. The next time you open R, you will need to reload the package if you wish to use it again.
 
-This might sound like an inconvenience, but choosing which packages to load keeps your R experience simple and orderly.
+This might sound inconvenient, but choosing which packages to load keeps your R experience simple and orderly.
 
 In the chunk below, load babynames (the package) and then open the help page for `babynames` (the data set). Be sure to read the help page before going on.
 
@@ -94,21 +94,21 @@ Yikes. What is happening?
 
 ### Displaying large data
 
-`babynames` is a large data frame, and R is not well equiped to display the contents of large data frames. R shows as many rows as possible before your memory buffer is overwhelmed. At that point, R stops, leaving you to look at an arbitrary section of your data.
+`babynames` is a large data frame, and R is not well equipped to display the contents of large data frames. R shows as many rows as possible before your memory buffer is overwhelmed. At that point, R stops, leaving you to look at an arbitrary section of your data.
 
-You can avoid this behaviour by transforming your data frame to a _tibble_. 
+You can avoid this behavior by transforming your data frame to a _tibble_. 
 
 ## tibbles
 
 ### What is a tibble?
 
-A tibble is a special type of table. R displays tibbles in a refined way whenever you have the **tibble** package loaded: R will print only the first ten rows of a tibble as well as all of the columns that fit into your console window. R also adds useful summary information about the tibble, such as the data types of each column and the size of the data set. 
+A tibble is a special type of table. R displays tibbles in a refined way whenever you have the **tibble** package loaded: R will print only the first ten rows of a tibble and all of the columns that fit into your console window. R also adds valuable summary information about the tibble, such as the data types of each column and the size of the data set. 
 
-Whenever you do not have the tibble packages loaded, R will display the tibble as if it were a data frame. In fact, tibbles _are_ data frames, an enhanced type of data frame.
+Whenever you do not have the tibble packages loaded, R will display the tibble as a data frame. In fact, tibbles _are_ data frames, an enhanced type of data frame.
 
 You can think of the difference between the data frame display and the tibble display like this:
 
-```{r out.width = "75%"}
+```{r out.width = "90%"}
 knitr::include_graphics("images/tibble_display.png")
 ```
 
@@ -135,7 +135,7 @@ babynames
 library(tibble)
 ```
 
-You do not need to worry much about tibbles in these tutorials; in future tutorials, I'll automatically convert each data frame into an interactive table. However, you should consider making tibbles an important part of your work in R.
+You do not need to worry much about tibbles in these tutorials; we will automatically convert each data frame into an interactive table in future tutorials. However, you should consider making tibbles an important part of your work in R.
 
 ### View()
 
@@ -145,10 +145,10 @@ What if you'd like to inspect the remaining portions of a tibble? To see the ent
 View(babynames)
 ```
 
-`View()` works in conjunction with the software that you run R from: `View()` opens the data editor provided by that software. Unfortunately, this tutorial doesn't come with a data editor, so you won't be able to use `View()` today (unless you open the RStudio IDE, for example, and run the code there).
+`View()` works in conjunction with the software (like RStudio) you run R from: `View()` opens the data editor provided by that software. Unfortunately, this tutorial doesn't come with a data editor, so you won't be able to use `View()` today (unless you open the RStudio IDE, for example, and run the code there).
 
 ### Recap
 
-Tibbles are a tool that makes life with R easier. Ironically, you may not come to appreciate their value right away: these tutorials wrap data frames into an interactive table for display. However, you will want to utilize tibbles and the tidyverse package when you move out of the tutorials and begin doing your own work with R inside of the RStudio IDE.
+Tibbles are a tool that makes life with R easier. Ironically, you may not immediately appreciate their value: these tutorials wrap data frames into an interactive table for display. However, you will want to utilize tibbles and the tidyverse package when you move out of the tutorials and begin working with R inside the RStudio IDE.
 
 This tutorial also introduced the babynames dataset. In the tutorials on data wrangling, you will use this data set to plot the popularity of _your_ name over time. Along the way, you will learn how to filter and subset data sets in R.
