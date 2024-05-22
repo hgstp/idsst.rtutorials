@@ -558,13 +558,13 @@ babynames |>
 
 ### Number Ones Challenge - Plot
 
-`number_ones` is a vector of every boys name to acheive a rank of one. 
+`number_ones` is a vector of every boys name to achieve a rank of one. 
 
 ```{r echo = TRUE}
 number_ones
 ```
 
-Use `number_ones` with `babynames` to recreate the plot below, which shows the popularity over time for every name in `number_ones`.
+Use `number_ones` with `babynames` to recreate the plot below, which shows the popularity over time for every name in `number_ones` as the name for a boy.
 
 ```{r, fig.height=5, out.width="100%"}
 babynames |> 
@@ -573,7 +573,7 @@ babynames |>
     geom_line(aes(x = year, y = prop, color = name))
 ```
 
-```{r ones-3, exercise = "TRUE", exercise.setup = "bnames"}
+```{r ones-3, exercise = TRUE, exercise.setup = "bnames"}
 
 ```
 
