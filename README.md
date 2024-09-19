@@ -36,6 +36,7 @@ remotes::install_github("hgstp/idsst.rtutorials")
 
 The tutorials were originally created by the [RStudio
 Education](https://github.com/rstudio-education) team and published
-under CC BY-NC-ND 3.0. We changed the name of all tutorials and adjusted
-the links for all vimeo videos. None of these and all other changes have
-been approved in any way by the RStudio education.
+under Creative Commons Attribution-ShareAlike 4.0 License (CC BY-SA
+4.0). We changed the name of all tutorials and adjusted the links for
+all vimeo videos. None of these and all other changes have been approved
+in any way by the RStudio education.
