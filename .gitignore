@@ -2,7 +2,12 @@
 .Rhistory
 .RData
 .Ruserdata
+<<<<<<< HEAD
 *.Rproj
+=======
+idsst.rtutorials.Rproj
+
+>>>>>>> e373680 (ignore Rproj)
 
 *.DS_Store
 *_files/
