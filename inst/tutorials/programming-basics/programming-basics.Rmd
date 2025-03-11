@@ -22,7 +22,7 @@ tutorial_options(exercise.timelimit = 60, exercise.checker = checker)
 
 ### Welcome to R
 
-R is easiest to use when you know how the R language works. This tutorial will teach you the implicit background knowledge that informs every piece of R code. You'll learn about:
+R is easiest to use when you understand the R language. This tutorial will teach you the essential background knowledge necessary for every piece of R code. You'll learn about:
 
 * **functions** and their **arguments**
 * **objects**
@@ -34,7 +34,7 @@ R is easiest to use when you know how the R language works. This tutorial will t
 
 ### Functions
 
-To begin learning about __functions__, please watch the following video: https://vimeo.com/220490105
+To begin learning about __functions__, please watch  ![](https://vimeo.com/220490105) from the RStudio Education team.
 
 ### Run a function
 
@@ -109,7 +109,7 @@ sqrt(961)
 
 ### Arguments
 
-To begin learning about function __arguments__, please watch the following video: https://vimeo.com/220490157
+To begin learning about function __arguments__, please watch  ![](https://vimeo.com/220490157) from the RStudio Education team.
 
 ### args()
 
@@ -138,7 +138,7 @@ question("Which arguments of R norm are optional?",
          correct = "The only required argument is `n` because it lacks a default value.")
 ```
 
-### rnorm() 1
+### rnorm() 
 
 Use `rnrom()` to generate 100 random normal values with a mean of 100 and a standard deviation of 15.
 
@@ -150,7 +150,7 @@ Use `rnrom()` to generate 100 random normal values with a mean of 100 and a stan
 rnorm(100, mean = 100, sd = 15)
 ```
 
-### rnorm() 2
+### rnorm(), again
 
 Can you spot the error in the code below? Fix the code and then re-run it.
 
@@ -166,7 +166,7 @@ rnorm(100, mean = 100, sd = 15)
 
 ### Objects
 
-To begin learning about __objects__, please watch the following video: https://vimeo.com/220493412
+To begin learning about __objects__, please watch  ![](https://vimeo.com/220493412) from the RStudio Education team.
 
 ### Object names
 
@@ -187,7 +187,7 @@ question("Which of these would be valid object names?",
 
 ### Using objects
 
-In the code chunk below, save the results of `rnorm(100, mean = 100, sd = 15)` to an object named `data`. Then, on a new line, call the `hist()` function on `data` to plot a histogram of the random values.
+In the code chunk below, save the results of `rnorm(100, mean = 100, sd = 15)` to an object named `data`. Use the assignment operator `<-` to save the results in the object names `data`. Then, on a new line, call the `plot()` function on `data` to plot the random values against a sequence from 1 to 100.
 
 ```{r objects-2, exercise = TRUE}
 
@@ -195,7 +195,7 @@ In the code chunk below, save the results of `rnorm(100, mean = 100, sd = 15)` t
 
 ```{r objects-2-solution}
 data <- rnorm(100, mean = 100, sd = 15)
-hist(data)
+plot(data)
 ```
 
 ### What if?
@@ -259,11 +259,11 @@ iris
 
 ### Vectors
 
-To begin learning about __vectors__, please watch the following video: https://vimeo.com/220490316
+To begin learning about __vectors__, please watch  ![](https://vimeo.com/220490316) from the RStudio Education team.
 
 ### Create a vector
 
-In the chunk below, create a vector that contains the integers from one to ten.
+In the chunk below, use the function `c()` to create a vector that contains the integers from one to ten.
 
 ```{r vectors-1, exercise = TRUE}
 
@@ -273,7 +273,7 @@ In the chunk below, create a vector that contains the integers from one to ten.
 c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
 ```
 
-### :
+### : (colon operator)
 
 If your vector contains a sequence of contiguous integers, you can create it with the `:` shortcut. Run `1:10` in the chunk below. What do you get? What do you suppose `1:20` would return?
 
@@ -285,9 +285,9 @@ If your vector contains a sequence of contiguous integers, you can create it wit
 1:10
 ```
 
-### []
+### [ ]
 
-You can extract any element of a vector by placing a pair of brackets behind the vector. Place the number of the element you'd like to extract inside the brackets. For example, `vec[3]` would return the third element of the vector named `vec`.
+You can extract any element from a vector by placing a pair of square brackets after the vector's name. Simply include the number of the element you want to extract inside the brackets. For example, `vec[3]` will return the third element of the vector named `vec`.
 
 Use the chunk below to extract the fourth element of `vec`.
 
@@ -300,7 +300,7 @@ vec <- c(1, 2, 4, 8, 16)
 vec[4]
 ```
 
-### More []
+### More [ ]
 
 You can also use `[]` to extract multiple elements of a vector. Place the vector `c(1,2,5)` between the brackets below. What does R return?
 
@@ -316,7 +316,7 @@ vec[c(1,2,5)]
 
 ### Names
 
-If the elements of your vector have names, you can extract them by name. Place a name or vector of names in the brackets behind a vector to do so. Surround each name with quotation marks, e.g. `vec2[c("alpha", "beta")]`.
+If the elements of your vector have names, you can extract them by name. Place a name or vector of names in the square brackets behind the vector object to do so. Surround each name with quotation marks, e.g., `vec2[c("alpha", "beta")]`.
 
 Extract the element named gamma from the vector below.
 
@@ -329,7 +329,7 @@ vec2 <- c(alpha = 1, beta = 2, gamma = 3)
 vec2["gamma"]
 ```
 
-### Vectorised operations
+### Vectorized operations
 
 Predict what the code below will return. Then, look at the result.
 
@@ -357,7 +357,7 @@ Predict what the code below will return. Then, look at the result.
 
 ### Types
 
-To begin learning about __data types__, please watch the following video: https://vimeo.com/220490241
+To begin learning about __data types__, please watch  ![](https://vimeo.com/220490241) from the RStudio Education team.
 
 ### Atomic types
 
@@ -397,11 +397,16 @@ Create a vector of integers from one to five. Can you imagine why you might want
 c(1L, 2L, 3L, 4L, 5L)
 ```
 
+```{r types3-check}
+"Good job! An integer vector uses less memory compared to double vector, having the same values. Compare  the result of object.size(c(1L, 2L, 3L, 4L, 5L)) with that of object.size(c(1, 2, 3, 4, 5))."
+```
+
+
 ### Floating point arithmetic
 
-Computers must use a finite amount of memory to store decimal numbers (which can sometimes require infinite precision). As a result, some decimals can only be saved as very precise approximations. From time to time you'll notice side effects of this imprecision, like below.
+Computers have a limited amount of memory to store decimal numbers, which can sometimes require infinite precision. As a result, some decimal values can only be represented as very precise approximations. Occasionally, you may notice the effects of this imprecision, as shown below.
 
-Compute the square root of two, square the answer (e.g., multiply the square root of two by the square root of two), and then subtract two from the result. What answer do you expect? What answer do you get?
+Calculate the square root of two, then square that result (multiply the square root of two by itself), and subtract two from the final answer. What outcome do you expect? What result do you obtain?
 
 ```{r types4, exercise = TRUE}
 
@@ -442,7 +447,7 @@ question('Which of these are object names? What is the difference between object
 
 ### Lists
 
-To begin learning about __lists__, please watch the following video: https://vimeo.com/220490360
+To begin learning about __lists__, please watch  ![](https://vimeo.com/220490360) from the RStudio Education team.
 
 ### Lists vs. vectors
 
@@ -493,16 +498,17 @@ strs <- c("apple", "banana", "carrot", "duck")
 nums <- c(1, 2, 3, 4)
 logs <- c(TRUE, TRUE, FALSE, TRUE)
 strs <- c("apple", "banana", "carrot", "duck")
-data.frame(numbers = nums, logicals = logs, strings = strs)
+data.frame(numbers = nums, logicals = logs, 
+           strings = strs)
 ```
 
 ```{r lists4-check}
-"Good Job. When you make a data frame, you must follow one rule: each column vector should be the same length."
+"Good Job. To create a data frame, it is essential that each column vector is of equal length."
 ```
 
 ### Extract a column
 
-Given that a data frame is a type of list (with named elements), how could you extract the strings column of the `df` data frame below? Do it.
+To extract the strings column from the `df` data frame, keep in mind that a data frame is a special type of list with named elements. Do it!
 
 ```{r lists5, exercise = TRUE}
 nums <- c(1, 2, 3, 4)
@@ -519,7 +525,7 @@ df$strings
 
 ### Packages
 
-To begin learning about __packages__, please watch the following video: https://vimeo.com/220490447
+To begin learning about __packages__, please watch  ![](https://vimeo.com/220490447) from the RStudio Education team.
 
 ### A common error
 
@@ -574,16 +580,19 @@ install.packages("dplyr")
 
 ### The tidyverse package
 
-The ["tidyverse packages"](http://tidyverse.org) are a set of packages that share a common philosophy and are designed to work well together. When you use tidyverse packages, you can make your life easier by using the **tidyverse** package. The tidyverse package provides a shortcut for installing and loading the entire suite of packages in "the tidyverse", e.g., 
+The ["tidyverse"](http://tidyverse.org) is a collection of packages designed for data science, sharing a common philosophy that enables them to work well together. 
 
-```{r eval = FALSE}
-install.packages("tidyverse")
-library(tidyverse)
-```
 
 ### Installing the tidyverse
 
-Think of the **tidyverse** package as a placeholder for the packages that are in the "tidyverse". By itself, tidyverse does not do much, but when you install the tidyverse package it instructs R to install every other package in the tidyverse at the same time. In other words, when you run `install.packages("tidyverse")`, R installs the following packages for you in one simple step:
+
+It's easy to install all packages from the **tidyverse**. You simply need to run
+
+```{r eval = FALSE}
+install.packages("tidyverse")
+```
+
+This command tells R to install all tidyverse packages simultaneously. When you run `install.packages("tidyverse")`, R will install the following packages in one simple step:
 
 * ggplot2
 * dplyr
@@ -607,7 +616,7 @@ Think of the **tidyverse** package as a placeholder for the packages that are in
 
 ### loading the tidyverse
 
-When you load tidyverse with `library("tidyverse")`, it instructs R to load _the most commonly used_ tidyverse packages. These are:
+When you load the **tidyverse** with `library("tidyverse")`, it instructs R to load _the most commonly used_ tidyverse packages. These are:
 
 * ggplot2
 * dplyr
@@ -645,4 +654,4 @@ question('Which package is not loaded by `library("tidyverse")`',
 
 ### Congratulations!
 
-Congratulations. You now have a formal sense of how the basics of R work. Although you may think of yourself as a Data Scientist, this brief Computer Science background will help you as you analyze data. Whenever R does something unexpected, you can apply your knowledge of how R works to figure out what went wrong.
+Congratulations! You now have a formal understanding of the basics of R. Whenever R behaves unexpectedly, you can use your knowledge of how R works to determine what went wrong.
