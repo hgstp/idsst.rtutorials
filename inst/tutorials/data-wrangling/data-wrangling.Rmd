@@ -1,0 +1,1150 @@
+---
+title: "Data wrangling with dplyr"
+tutorial:
+  version: 1.0
+output: 
+  learnr::tutorial:
+    progressive: true
+    allow_skip: true
+    df_print: default
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+library(tidyverse)
+
+checker <- function(label, user_code, check_code, envir_result, evaluate_result, ...) {
+  list(message = check_code, correct = TRUE, location = "append")
+}
+tutorial_options(exercise.timelimit = 60, exercise.checker = checker)
+knitr::opts_chunk$set(echo = FALSE)
+
+```
+
+```{r bnames, echo = FALSE, message = FALSE}
+library(babynames)
+babynames <- filter(babynames, year >= 1970)
+
+tops <- babynames |> 
+  group_by(name, sex) |> 
+  summarize(total = sum(n)) |> 
+  ungroup() |> 
+  top_n(10, total)
+  
+top_10 <- babynames |> 
+  semi_join(tops, by = c("name", "sex"))
+
+number_ones <- babynames |> 
+  group_by(year, sex) |> 
+  mutate(rank = min_rank(desc(n))) |> 
+  filter(rank == 1, sex == "M") |> 
+  ungroup() |> 
+  distinct(name) %>%
+  .$name
+
+
+```
+
+## Welcome
+
+In this case study, you will explore the popularity of names over time. Along the way, you will get familiar with following `dplyr` functions:
+
+* `select()` and `filter()`, which let you extract rows and columns from a data frame
+* `arrange()`, which lets you reorder the rows in your data
+* `|>`, which organizes your code into reader-friendly "pipes"
+*  `mutate()`, `group_by()`, and `summarize()`, which help you use your data to compute new variables and summary statistics
+
+This tutorial uses the [core tidyverse packages](http://tidyverse.org/), including `ggplot2`, `tibble`, and `dplyr` , as well as the `babynames` package. All of these packages have been pre-installed and pre-loaded for your convenience.
+
+Click the Next Topic button to begin.
+
+## Your name
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+library(tidyverse)
+```
+
+### The dataset
+
+The `babynames` dataset contains the number of people born in any year between 1880 and 2017 listed by name. We begin by limiting the dataset to include only observations from 1970 onwards to speed up the computation process.
+
+```{r echo = TRUE}
+filter(babynames, year >= 1970)
+```
+
+### The history of a single name
+
+You can use the data in `babynames` to make graphs like this, which reveal the history of a name, perhaps your name.
+
+```{r, label="pop-stephan",  echo = FALSE, message = FALSE, warning = FALSE, out.width = "90%"}
+babynames |> 
+  filter(name == "Stephan", sex == "M") |> 
+  ggplot() +
+    geom_line(aes(x = year, y = prop)) +
+    labs(title = "Popularity of the name Stephan")
+```
+
+But before you do, you will need to trim down `babynames`. At the moment, there are more rows in `babynames` than you need to build such a plot. 
+
+### An example
+
+To illustrate my point, consider how I created the plot above: I started with the complete data set, which, if displayed as a scatterplot, would have looked like this.
+
+```{r , label="pop-everyname-point", out.width = "60%", cached = TRUE, echo=TRUE}
+ggplot(babynames) +
+  geom_point(aes(x = year, y = prop)) +
+  labs(title = "Popularity of every name in the data set")
+```
+
+I then narrowed the data to just the rows that contain my name, before plotting the data with a line geom. Here's how the rows with just my name look as a scatterplot.
+
+```{r, label="pop-stephan-point", out.width = "60%", cached = TRUE, echo=TRUE}
+babynames |> 
+  filter(name == "Stephan", sex == "M") |> 
+  ggplot() +
+    geom_point(aes(x = year, y = prop)) +
+    labs(title = "Popularity of the name Stephan")
+```
+
+If I had skipped this step, my line graph would've connected all of the points in the large data set, creating an uninformative graph.
+
+```{r, label="pop-everyname-line", out.width = "60%", cached = TRUE}
+ggplot(babynames) +
+  geom_line(aes(x = year, y = prop)) +
+  labs(title = "Popularity of every name in the data set")
+```
+
+Your goal in this section is to repeat this process for your own name (or a name that you choose). Along the way, you will learn a set of functions that isolate information within a data set. 
+
+### Isolating data
+
+This type of task occurs often in Data Science: you need to extract data from a table before you can use it. You can do this task quickly with three functions from the `dplyr` package:
+
+1. **select()** - which extracts columns from a data frame
+1. **filter()** - which extracts rows from a data frame
+1. **arrange()** - which moves important rows to the top of a data frame
+
+Each function takes a data frame or tibble as it's first argument and returns a new data frame or tibble as its output. 
+
+## select()
+
+The `select()` function is used to extract specific columns from a data frame and returns them as a new data frame. To use `select()`, provide the name of the data frame you want to extract columns from, followed by the names of the columns you wish to include. You do not need to use quotation marks or the `$` symbol for the column names;  `select()` knows that these names are column names in the data frame that you supply.
+
+### Exercise - select()
+
+Use the example below to get a feel for `select()`. Can you extract just the `name` column? How about the `name` and `year` columns? How about all of the columns except `prop`?
+
+```{r select-1, exercise = TRUE, exercise.eval = FALSE, exercise.setup = "bnames"}
+select(babynames, )
+```
+
+```{r select-1-solution}
+select(babynames, name)
+select(babynames, name, year)
+select(babynames, year, sex, name, n)
+```
+
+### select() helpers
+
+You can also use a series of helpers with `select()`. For example, if you place a minus sign before a column name, `select()` will return every column but that column. Can you predict how the minus sign will work here?
+
+```{r select-2, exercise = TRUE, exercise.setup = "bnames"}
+select(babynames, -c(n, prop))
+```
+
+The table below summarizes the other `select()` helpers that are available in `dplyr`. Study it, and then click "Continue" to test your understanding.
+
+Helper Function   | Use                                               | Example
+----------------- | ------------------------------------------------- | -------
+**-**             | Columns except                               | `select(babynames, -prop)`
+**:**             | Columns between (inclusive)                  | `select(babynames, year:n)`
+**contains()**    | Columns that contains a string               | `select(babynames, contains("n"))`
+**ends_with()**   | Columns that ends with a string              | `select(babynames, ends_with("n"))`
+**matches()**     | Columns that matches a regular expression                 | `select(babynames, matches("n"))`
+**num_range()**   | Columns with a numerical suffix in the range | Not applicable with `babynames`
+**one_of()**      | Columns whose name appear in the given set     | `select(babynames, one_of(c("sex", "gender")))`
+**starts_with()** | Columns that starts with a string            | `select(babynames, starts_with("n"))`
+
+### select() quiz
+
+```{r select-quiz}
+question(
+  "Which of these is not a way to select the `name` and `n` columns together?",
+  answer("select(babynames, -c(year, sex, prop))"),
+  answer("select(babynames, name:n)"),
+  answer('select(babynames, starts_with("n"))'),
+  answer('select(babynames, ends_with("n"))', correct = TRUE),
+  allow_retry = TRUE
+)
+```
+
+## filter()
+
+The `filter()` function is used to extract specific rows from a data frame, returning these rows as a new data frame. Similar to the `select()` function, the first argument for `filter()` should be the data frame you want to extract rows from. The subsequent arguments should consist of logical tests; `filter()` will return every row where these tests evaluate to `TRUE`.
+
+### filter in action
+
+For example, the code chunk below returns every row with the name "Sea" in `babynames`. 
+
+```{r echo = TRUE}
+filter(babynames, name == "Sea")
+```
+
+### Logical tests
+
+To get the most from `filter()`, you will need to know how to use R's logical test operators, which are summarized below.
+
+Logical operator | tests                                | Example
+---------------- | ------------------------------------ | ---------
+**>**            | Is `x` greater than `y`?             | `x > y`
+**>=**           | Is `x` greater than or equal to `y`? | `x >= y`
+**<**            | Is `x` less than `y`?                | `x < y`
+**<=**           | Is `x` less than or equal to `y`?    | `x <= y`
+**==**           | Is `x` equal to `y`?                 | `x == y`
+**!=**           | Is `x` not equal to `y`?             | `x != y`
+**is.na()**      | Is `x` an `NA`?                      | `is.na(x)`
+**!is.na()**     | Is `x` not an `NA`?                  | `!is.na(x)`
+
+### Exercise - Logical Operators
+
+See if you can use the logical operators to manipulate our code below to show:
+
+* All of the names where prop is greater than or equal to 0.08
+* All of the children named "Khaleesi"
+* All of the names that have a missing value for `n` (Hint: this should return an empty data set).
+
+```{r filter-0, exercise = TRUE, exercise.setup = "bnames", exercise.eval = FALSE}
+filter(babynames, )
+```
+
+```{r filter-0-solution}
+filter(babynames, prop >= 0.08)
+filter(babynames, name == "Khaleesi")
+filter(babynames, is.na(n))
+```
+
+### Two common mistakes
+
+When you use logical tests, be sure to look out for two common mistakes. One appears in each code chunk below. Can you find them? When you spot a mistake, fix it and then run the chunk to confirm that it works.
+
+```{r eval = FALSE, echo = TRUE}
+filter(babynames, name = "Sea")
+```
+
+```{r filter-1a, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r filter-1a-solution}
+filter(babynames, name == "Sea")
+```
+
+```{r filter-1a-check}
+"Good Job! Remember to use == instead of = when testing for equality."
+```
+
+```{r eval = FALSE, echo = TRUE}
+filter(babynames, name == Sea)
+```
+
+```{r filter-1b, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r filter-1b-solution}
+filter(babynames, name == "Sea")
+```
+
+```{r filter-1b-check}
+"Good Job! As written this code would check that name is equal to the contents of the object named Sea, which does not exist."
+```
+
+### Two mistakes - Recap
+
+When using logical tests, be aware of these two common mistakes:
+
+1. Using `=` instead of `==` to test for equality.
+2. Forgetting to use quotation marks when comparing strings, such as `name == "Abby"` instead of `name == Abby`.
+
+### Combining tests
+
+If you provide more than one test to `filter()`, `filter()` will combine the tests with an **and** statement (`&`): it will only return the rows that satisfy all of the tests. 
+
+To combine multiple tests in a different way, use R's Boolean operators. For example, the code below will return all of the children named Sea or Anemone.
+
+```{r echo = TRUE}
+filter(babynames, name == "Sea" | name == "Anemone")
+```
+
+### Boolean operators
+
+You can find a complete list or base R's Boolean operators in the table below.
+
+Boolean operator | represents                                 | Example
+---------------- | ------------------------------------------ | ---------
+**&**            | Are _both_ `A` and `B` true?               | `A & B`
+`|`            | Are _one or both_ of `A` and `B` true?     | `A | B`
+**!**            | Is `A` _not_ true?                         | `!A`
+**xor()**        | Is _one and only one_ of `A` and `B` true? | `xor(A, B)`
+**%in%**         | Is `x` in the set of `a`, `b`, and `c`?    | `x %in% c(a, b, c)`
+**any()**        | Are _any_ of `A`, `B`, or `C` true?        | `any(A, B, C)`
+**all()**        | Are _all_ of `A`, `B`, or `C` true?        | `all(A, B, C)`
+
+### Exercise - Combining tests
+
+Use Boolean operators to alter the code chunk below to return only the rows that contain:
+
+* *Girls* named Sea
+* Names that were used by exactly 189 or 190 children in 1970
+* Names that are one of Acura, Lexus, or Yugo
+
+```{r filter-2, exercise = TRUE, exercise.eval = TRUE, exercise.setup = "bnames"}
+filter(babynames, name == "Sea" | name == "Anemone")
+```
+
+```{r filter-2-solution}
+filter(babynames, name == "Sea", sex == "F")
+filter(babynames, n == 189 | n == 190, year == 1970)
+filter(babynames, name %in% c("Acura", "Lexus", "Yugo"))
+```
+
+### Two more common mistakes
+
+Logical tests can also lead to two common mistakes, which you should try to avoid. Each mistake is illustrated in the code chunks below; one results in an error, while the other is unnecessarily verbose. Diagnose the chunks and correct the code.
+
+```{r eval = FALSE, echo = TRUE}
+filter(babynames, 10 < n < 20)
+```
+
+```{r filter-3, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r filter-3-solution}
+filter(babynames, 10 < n, n < 20)
+```
+
+```{r filter-3-check}
+"Good job! You cannot combine two logical tests in R without using a Boolean operator (or at least a comma between filter arguments)."
+```
+
+```{r eval = FALSE, echo = TRUE}
+filter(babynames, n == 5 | n == 6 | n == 7 | n == 8 | n == 9)
+```
+
+```{r filter-4, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r filter-4-solution}
+filter(babynames, n %in% c(5, 6, 7, 8, 9))
+```
+
+```{r filter-4-check}
+"Good job! Although the first code works, you should make your code more concise by collapsing multiple or statements into an %in% statement when possible."
+```
+
+### Two more common mistakes - Recap
+
+When combining multiple logical tests, watch out for these common mistakes
+1. Collapsing multiple logical tests into a single test _without using a Boolean operator_. 
+1. Instead of using `%in%`, use repeated `|` operators, for example, `x == 1 | x == 2 | x == 3` rather than `x %in% c(1, 2, 3)`.
+
+
+## arrange()
+
+When you use `arrange()` with a single column name, it will reorder the rows of the data frame based on the values in that column. The row with the lowest value in the specified column will be placed first, followed by the row with the second lowest value, and so on. If the column contains character strings, `arrange()` will sort them in alphabetical order.
+
+### Exercise - arrange()
+
+Use the code chunk below to arrange `babynames` by `n`. Can you tell what the smallest value of `n` is? 
+
+```{r arrange-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r arrange-1-solution}
+arrange(babynames, n)
+```
+
+```{r arrange-1-check}
+"Good job! The compiler of `babynames` used 5 as a cutoff; a name only made it into babynames for a given year and gender if it was used for five or more children."
+```
+
+### Tie breakers
+
+If you provide additional column names, `arrange()` will use them as tie breakers to order rows with identical values in the preceding columns. Modify the code below to include `prop` as a tie breaker. The result should first sort the rows by the values of `n`, and then reorder the rows within each value of `n` based on the values of `prop`.
+
+```{r arrange-2, exercise = TRUE, exercise.eval = TRUE}
+arrange(babynames, n)
+```
+
+```{r arrange-2-solution}
+arrange(babynames, n, prop)
+```
+
+### Descending
+
+If you want to sort rows in descending order, wrap the column name with `desc()`. The `arrange()` function will then sort the rows from largest to smallest.
+
+Add a `desc()` to the code below to display the most popular name for 2017 (the largest year in the dataset) instead of 1970 (the smallest year in the dataset).
+
+```{r arrange-3, exercise = TRUE, exercise.eval = TRUE}
+arrange(babynames, year, desc(prop))
+```
+
+```{r arrange-3-solution}
+arrange(babynames, desc(year), desc(prop))
+```
+
+Think you have it? Click Continue to test yourself.
+
+### arrange() quiz
+
+Which name was the most popular for a single gender in a given year? In the code chunk below, use `arrange()` to position the row with the largest value of `prop` at the top of the dataset.
+
+```{r arrange-4, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r arrange-4-solution}
+arrange(babynames, desc(prop))
+```
+
+Now arrange `babynames` so that the row with the largest value of `n` appears at the top of the data frame. Will this be the same row? Why or why not?
+
+```{r arrange-5, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r arrange-5-solution}
+arrange(babynames, desc(n))
+# The number of children represented by each proportion grew 
+# over time as the population grew 
+```
+
+```{r arrange-5-check}
+"The number of children represented by each proportion grew over time as the population grew."
+```
+
+## |>
+
+### Steps
+
+Notice how each dplyr function takes a data frame as input and returns a data frame as output. This makes the functions easy to use in a step by step fashion. For example, you could:
+
+1. Filter `babynames` to just boys born in 2017,
+2. select the `name` and `n` columns from the result, and
+3. arrange those columns so that the most popular names appear on top.
+
+```{r echo = TRUE}
+boys_2017 <- filter(babynames, year == 2017, sex == "M")
+boys_2017 <- select(boys_2017, name, n)
+boys_2017 <- arrange(boys_2017, desc(n))
+boys_2017
+```
+
+### Redundancy
+
+The results indicate the most popular boys' names from 2017, which is the most recent year in the dataset. However, take a closer look at the code. Do you see how we are recreating `boys_2017` at each step? This approach makes it inefficient to write R code.
+
+You can avoid creating `boys_2017` several times by nesting functions within each other, but this results in code that is difficult to read:
+
+```{r echo = TRUE, eval = FALSE}
+arrange(select(filter(babynames, year == 2017, sex == "M"), name, n), desc(n))
+```
+
+> R provides a third way to write sequences of functions: the __pipe operator__ `|>'.
+
+### |>
+
+The pipe operator `|>` serves a straightforward purpose: it takes the result on its left and passes it as the first argument to the function on its right. In other words, `x |> f(y)` is equivalent to `f(x, y)`. This syntax makes it easy to write and read sequences of functions applied in a step-by-step manner. For example, we can use the pipe operator to rewrite the code mentioned earlier:
+
+```{r echo = TRUE}
+babynames |> 
+  filter(year == 2017, sex == "M") |> 
+  select(name, n) |> 
+  arrange(desc(n))
+```
+
+As you read the code, pronounce `|>` as "then." You'll notice that dplyr makes it easy to read pipes; each function name is a verb, making our code resemble the statement: 
+
+"Take `babynames`, _then_ filter it by name and sex, _then_ select the name and n columns, _then_ arrange the results by descending values of n."
+
+dplyr also makes it easy to write pipes. Each dplyr function returns a data frame that can be piped into another dplyr function, which will accept the data frame as its first argument. In fact, dplyr functions are written with pipes in mind: each function does one simple task. dplyr expects you to use pipes to combine these simple tasks to produce sophisticated results.
+
+### Exercise - Pipes
+
+We will use pipes for the remainder of the tutorial, and we expect you to do the same. Let's practice a little by creating a new pipe in the section below. The pipe should:
+
+1. Filter `babynames` to just the *girls* that were born in 2017, then
+2. select the `name` and `n` columns, then
+3. arrange the results so that the most popular names are near the top.
+
+Try to write your pipe without copying and pasting the code from above.
+
+```{r pipe-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r pipe-1-solution}
+babynames |> 
+  filter(year == 2017, sex == "F") |> 
+  select(name, n) |> 
+  arrange(desc(n))
+```
+
+### Your name
+
+You've mastered skills that allow you to easily plot your name's popularity over time. In the code chunk below, use a combination of `dplyr` and `ggplot2` functions with `|>` to:
+
+1. Trim `babynames` to just the rows that contain your name and your sex, then
+2. trim the result to just the columns that will appear in your graph (not strictly necessary, but useful practice), then
+3. plot the results as a line graph with `year` on the x axis and `prop` on the y axis.
+
+Note that the first argument of `ggplot()` takes a data frame, which means you can add `ggplot()` directly to the end of a pipe. However, you will need to switch from `|>` to `+` to finish adding layers to your plot.
+
+```{r your-name-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r your-name-1-solution}
+babynames |> 
+  filter(name == "Your Name", sex == "_") |> 
+  select(year, prop) |> 
+  ggplot() +
+    geom_line(aes(x = year, y = prop)) +
+    labs(title = "Popularity of the name ____")
+```
+
+### Recap
+
+Together, `select()`, `filter()`, and `arrange()` let you quickly find information displayed within your data.
+
+Pipes make R expressive, similar to a spoken language. Spoken languages consist of simple words combined into sentences to express sophisticated ideas.
+
+In the tidyverse, functions are like words: each does one simple task well. You can combine these tasks into pipes with `|>` to perform complex, customized procedures.
+
+
+
+## The most popular names
+
+### What are the most popular names between 1970 and 2017?
+
+Let's use `babynames` to answer a different question: what are the most popular names between 1970 and 2017?
+
+This question seems simple enough, but to answer it we need to be more precise: how do you define "the most popular" names? Try to think of several definitions and then click Continue. After the Continue button, we will suggest two definitions.
+
+### Two definitions of popular
+
+Let's work with two definitions of _popular_: one based on sums and the other on ranks.
+
+1. **Sums** - A name is popular _if the total number of children that have the name is large when you sum across years_.
+2. **Ranks** - A name is popular _if it consistently ranks among the top names from year to year_.
+
+This raises a question:
+
+```{r q1}
+question(
+  "Do we have enough information in `babynames` to compare the popularity of names?",
+  answer("No. No cell in `babynames` contains a rank value or a sum across years."),
+  answer("Yes. We can use the information in `babynames` to compute the values we want.", correct = TRUE),
+  allow_retry = TRUE
+)
+
+```
+
+### Deriving information
+
+Every data frame you encounter contains more information than what is visible at first glance. For instance, while the `babynames` data frame does not show the total number of children who share your name, it certainly allows you to infer that number. To find the actual total, you simply need to perform the following calculation:
+
+```{r echo = TRUE}
+babynames |> 
+  filter(name == "Stephan", sex == "M") |> 
+  summarize(total = sum(n))
+```
+
+### Useful functions
+
+dplyr provides three functions that can help you reveal the information implied by your data: 
+
+* `summarize()`  
+* `group_by()`  
+* `mutate()`
+
+Like `select()`, `filter()` and `arrange()`, these functions all take a data frame as their first argument and return a new data frame as their output, which makes them easy to use in pipes.
+
+Let's master each function and use them to analyze popularity as we go.
+
+## summarize()
+
+The `summarize()` function takes a data frame and uses it to calculate a new data frame containing summary statistics.
+
+### Syntax
+
+To use the `summarize()` function, you need to pass in a data frame along with one or more named arguments. Each named argument should correspond to an R expression that produces a single value. The `summarize()` function will create a new data frame where each named argument is converted into a column. The name of the argument will become the column name, while the value returned by the argument will fill the column.
+
+### Example
+
+We used `summarize()` above to calculate the total number of boys named "Stephan." Let's expand that code to also calculate:
+
+* `max` - the maximum number of boys named "Stephan" in a single year
+* `mean` - the mean number of boys named "Stephan" per year
+
+```{r echo = TRUE}
+babynames |> 
+  filter(name == "Stephan", sex == "M") |> 
+  summarize(total = sum(n), max = max(n), mean = mean(n))
+```
+
+Don't let the code above fool you. The first argument of `summarize()` is always a data frame, but when you use `summarize()` in a pipe, the first argument is provided by the pipe operator, `|>`. Here the first argument will be the data frame that is returned by `babynames |> filter(name == "Stephan", sex == "M")`.
+
+### Exercise - summarize()
+
+Use the code chunk below to compute three statistics:
+
+1. The total number of children who ever had your name,
+1. the minimum number of children given your name in a single year,
+1. the median number of children given your name per year. 
+
+If you are unable to think of an R function that computes each statistic, click the Hint button.
+
+```{r summarize-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+<div id="summarize-1-hint">
+**Hint:** `max()` and `mean()` calculate the maximum and mean values, respectively. You can simply generalize to identify functions that compute the minimum and median values.
+</div>
+
+```{r summarize-1-solution}
+babynames |> 
+  filter(name == "Stephan", sex == "M") |> 
+  summarize(total = sum(n), min = min(n), median = median(n))
+```
+
+
+### Summary functions
+
+So far our `summarize()` examples have relied on `sum()`, `min()`, max()`, `mean()` and `median()`. 
+
+But you can use any function in `summarize()` as long as it meets one criteria: _The function must take a **vector** of values as input and return a **single** value as output._ 
+
+Functions that perform this task are called summary functions, which are frequently used in descriptive statistics. Some of the most useful summary functions include:
+
+1. **Measures of location** - `mean(x)`, `median(x)`, `quantile(x, 0.25)`, `min(x)`, and `max(x)`
+1. **Measures of spread** - `sd(x)`, `var(x)`, `IQR(x)`, and `mad(x)`
+1. **Measures of position** - `first(x)`, `nth(x, 2)`, and `last(x)`
+1. **Counts** - `n_distinct(x)` and `n()`, which takes no arguments, and returns the size of the current group or data frame. 
+1. **Counts and proportions of logical values** - `sum(!is.na(x))`, which counts the number of `TRUE`s returned by a logical test; `mean(y == 0)`, which returns the proportion of `TRUE`s returned by a logical test.
+
+Let's apply some of these summary functions. Click Continue to test your understanding. 
+
+### Khaleesi challenge
+
+_Khaleesi_ is a very modern name that appears to be based on the _Game of Thrones_ TV series, which premiered on April 17, 2011. 
+
+In the chunk below, filter `babynames` to just the rows where `name == "Khaleesi"`. Then use `summarize()` and a summary function to return the first value of `year` in the data set.
+
+```{r khaleesi, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r khaleesi-solution}
+babynames |> 
+  filter(name == "Khaleesi") |> 
+  summarize(year = first(year))
+```
+
+### Distinct name challenge
+
+In the chunk below, use `summarize()` and a summary function to return a data frame with two columns:
+
+* A column named `n` that displays the total number of rows in `babynames`, and
+* a column named `distinct` that displays the number of distinct names in `babynames`.
+
+Will these numbers be different? Why or why not?
+
+```{r distinct, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r distinct-solution}
+babynames |> 
+  summarize(n = n(), distinct = n_distinct(name))
+```
+
+```{r distinct-check}
+"Good job! The two numbers are different because most names appear in the data set more than once. They appear once for each year in which they were used."
+```
+
+### summarize by groups?
+
+How can we apply `summarize()` to find the most popular names in `babynames`? 
+
+You've learned how to calculate the total number of children with your name, which serves as one measure of its popularity: the total number of children who share that name.
+
+```{r eval = FALSE, echo = TRUE}
+babynames |> 
+  filter(name == "Stephan", sex == "M") |> 
+  summarize(total = sum(n))
+```
+
+However, we had to isolate your name from the rest of the data to calculate this number. You could imagine writing a program that goes through each name one at a time and: 
+
+1. filters out the rows with just that name, then
+2. applies summarize to the rows.
+
+Eventually, the program could combine all of the results back into a single data set. However, you don't need to write such a program; this is the job of `dplyr`'s `group_by()` function.
+
+## group_by()
+
+The `group_by()` function takes a data frame along with the names of one or more columns within that data frame. It returns a new data frame that has been __grouped__ into sets of rows sharing the same combinations of values in the specified columns. 
+
+### group_by() in action
+
+For example, the result below is grouped into rows that have the same combination of `year` and `sex` values: boys in 1970 are treated as one group, girls in 1970 as another group and so on.
+
+```{r echo = TRUE}
+babynames |>
+  group_by(year, sex)
+```
+
+### Using group_by()
+
+The `group_by()` function, on its own, doesn't perform any calculations or transformations. Instead, it establishes grouping criteria that are stored as metadata alongside the original dataset. If your dataset is a tibble, R will indicate that it is grouped at the top of the tibble display. Other than this grouping information, the data itself remains unchanged.
+
+However, when you apply a dplyr function like `summarize()` on grouped data, it executes the function in a groupwise manner.
+Instead of calculating a single summary for the entire data set, dplyr computes separate summaries for each group and returns them as a single data frame. The data frame will contain the summary columns as well as the columns contained in the grouping criteria, which are essential for assigning the various summary values to the correct group.
+
+```{r grouping-1, exercise = TRUE, exercise.eval = TRUE}
+babynames |>
+  group_by(year, sex) |> 
+  summarize(total = sum(n))
+```
+
+To understand exactly what `group_by()` is doing, remove the line `group_by(year, sex) |>` from the code above and rerun it. How do the results change?
+
+### Ungrouping 1
+
+If you apply `summarize()` to grouped data, `summarize()` will return data that is grouped in a similar, but not identical fashion. `summarize()` will remove the last variable in the grouping criteria, which creates a data frame that is grouped at a higher level. For example, this `summarize()` statement receives a data frame that is grouped by year and sex, but it returns a data frame that is grouped only by year.
+
+```{r grouping-2, echo = TRUE}
+babynames |>
+  group_by(year, sex) |> 
+  summarize(total = sum(n))
+```
+
+### Ungrouping 2
+
+If only one grouping variable is left in the grouping criteria, `summarize()` will return an ungrouped data set. This feature let's you progressively "unwrap" a grouped data set:
+
+If we add another `summarize()` to our pipe, 
+
+1.  our data set will first be grouped by year and sex, then  
+1. it will be summarized into a data set grouped by year (i.e., the result above), then  
+1. it will be summarized into a final data set that is not grouped.
+
+```{r echo = TRUE}
+babynames |>
+  group_by(year, sex) |> 
+  summarize(total = sum(n)) |> 
+  summarize(total = sum(total))
+```
+
+### Ungrouping 3
+
+If you wish to manually remove the grouping criteria from a data set, you can do so with `ungroup()`.
+
+```{r grouping-3, echo = TRUE}
+babynames |>
+  group_by(year, sex) |> 
+  ungroup()
+```
+
+### Ungrouping 3
+
+And, you can override the current grouping information with a new call to `group_by()`.
+
+```{r grouping-4, echo = TRUE}
+babynames |>
+  group_by(year, sex) |> 
+  group_by(name)
+```
+
+> __Conclusion:__ With `group_by()`, `summarize()`, and `ungroup()`, you have the tools needed to take groupwise summaries of your data at different levels of grouping.
+
+### `.by` argument
+
+
+In case you want to define a group which should be valid only for one summarize-step, you can alternatively use the `.by` argument of `summarize()`. 
+
+```{r echo = TRUE}
+babynames |>
+  summarize(total = sum(n), .by = c(year, sex))
+```
+
+
+### The most popular names by total children
+
+You now know enough to calculate the most popular names by total children (it may take some strategizing, but you can do it!). 
+
+In the code chunk below, use `group_by()`, `summarize()`, and `arrange()` to display the ten most popular names. Compute popularity as the total number of children of a single gender given a name. In other words, the total number of boys named "Kelly" should be computed separately from the total number of girls named "Kelly".
+
+```{r popular-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r popular-1-solution}
+babynames |>
+  group_by(name, sex) |> 
+  summarize(total = sum(n)) |> 
+  arrange(desc(total))
+```
+
+### The history of the most popular names by total children
+
+Let's examine how the popularity of popular names has changed over time. To help us, I've made `top_10`, which is a version of `babynames` that is trimmed down to just the ten most popular names from above.
+
+```{r}
+top_10
+```
+
+### Exercise - Proportions for popular names
+
+Use the code block below to plot a line graph of `prop` vs `year` for each name in `top_10`. Be sure to color the lines by name to make the graph interpretable.
+
+```{r popular-2, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r popular-2-solution}
+top_10 |>
+  ggplot() +
+    geom_line(aes(x = year, y = prop, color = name))
+```
+
+### Exercise - Total children for popular names
+
+Now use `top_10` to plot `n` vs `year` for each of the names. How are the plots different? Why might that be? How does this affect our decision to use total children as a measure of popularity?
+
+```{r popular-3, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r popular-3-solution}
+top_10 |>
+  ggplot() +
+    geom_line(aes(x = year, y = n, color = name))
+```
+
+```{r popular-3-check}
+"Good job! This graph shows different trends than the one above, now let's consider why."
+```
+
+## mutate()
+
+### The total number of children by year
+
+Why might there be a difference between the _proportion_ of children who receive a name over time, and the _number_ of children who receive the name?
+
+An obvious culprit could be the total number of children born per year. If more children are born each year, the number of children who receive a name could grow even if the proportion of children given that name declines.
+
+Test this theory in the chunk below. Use `babynames` and groupwise summaries to compute the total number of children born each year and then to plot that number vs. year in a line graph.
+
+```{r population, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r population-solution}
+babynames |> 
+  group_by(year) |> 
+  summarize(n = sum(n)) |> 
+  ggplot() +
+    geom_line(aes(x = year, y = n))
+```
+
+### Popularity based on rank
+
+The graph above suggests that our first definition of popularity is confounded with population growth: the most popular names in 2015 likely represent far more children than the most popular names in 1880. The total number of children given a name may still be the best definition of popularity to use, but it will overweight names that have been popular in recent years.
+
+There is also evidence that our definition is confounded with a gender effect: only one of the top ten names was a girl's name.
+
+If you are concerned about these things, you might prefer to use our second definition of popularity, which would give equal representation to each year and gender:
+
+2. **Ranks** - A name is popular _if it consistently ranks among the top names from year to year_.
+
+To use this definition, we could:
+
+1. Compute the rank of each name within each year and gender. The most popular name would receive the rank 1 and so on. 
+2. Find the median rank for each name, accounting for gender. The names with the lowest median would be the names that "consistently rank among the top names from year to year."
+
+To do this, we will need to learn one last dplyr function.
+
+### mutate()
+
+`mutate()` uses a data frame to compute new variables. It then returns a copy of the data frame that includes the new variables. For example, we can use `mutate()` to compute a `percent` variable for `babynames`. Here percent is just the `prop` multiplied by 100 and rounded to two decimal places.
+
+```{r echo = TRUE}
+babynames |>
+  mutate(percent = round(prop * 100, 2))
+```
+
+### Exercise - mutate()
+
+The syntax of mutate is similar to `summarize()`. `mutate()` takes first a data frame, and then one or more named arguments that are set equal to R expressions. `mutate()` turns each named argument into a column. The name of the argument becomes the column name and the result of the R expression becomes the column contents.
+
+Use `mutate()` in the chunk below to create a `births` column, the result of dividing `n` by `prop`. You can think of `births` as a sanity check; it uses each row to double check the number of boys or girls that were born each year. If all is well, the numbers will agree across rows (allowing for rounding errors).
+
+```{r mutate-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r mutate-1-solution}
+babynames |> 
+  mutate(births = n / prop)
+```
+
+### Vectorized functions
+
+Like `summarize()`, `mutate()` works in combination with a specific type of function. `summarize()` expects summary functions, which take vectors of input and return _single_ values. `mutate()` expects **vectorized functions**, which take vectors of input and return _vectors_ of values.
+
+In other words, summary functions like `min()` and `max()` won't work well with `mutate()`. You can see why if you take a moment to think about what `mutate()` does: `mutate()` adds a new column to the original data set. In R, every column in a dataset must be the same length, so `mutate()` must supply as many values for the new column as there are in the existing columns. 
+
+If you give `mutate()` an expression that returns a single value, it will follow R's recycling rules and repeat that value as many times as needed to fill the column. This can make sense in some cases, but the reverse is never true: you cannot give `summarize()` a vectorized function; `summarize()` needs its input to return a single value.
+
+What are some of R's vectorized functions? Click Continue to find out.
+
+### The most useful vectorized functions
+
+Some of the most useful vectorised functions in R to use with `mutate()` include:
+
+1. **Arithmetic operators** - `+`, `-`, `*`, `/`, `^`. These are all vectorised, using R's so called "recycling rules". If one vector of input is shorter than the other, it will automatically be repeated multiple times to create a vector of the same length. 
+1. **Modular arithmetic**: `%/%` (integer division) and `%%` (remainder)
+1. **Logical comparisons**, `<`, `<=`, `>`, `>=`, `!=`
+1. **Logs** - `log(x)`, `log2(x)`, `log10(x)`
+1. **Offsets** - `lead(x)`, `lag(x)`
+1. **Cumulative aggregates** - `cumsum(x)`, `cumprod(x)`, `cummin(x)`, `cummax(x)`, `cummean(x)`
+1. **Ranking** - `min_rank(x)`, `row_number(x)`, `dense_rank(x)`, `percent_rank(x)`, `cume_dist(x)`, `ntile(x)`
+
+For ranking, I recommend that you use `min_rank()`, which gives the smallest values the top ranks. To rank in descending order, use the familiar `desc()` function, e.g.
+
+```{r echo = TRUE}
+min_rank(c(50, 100, 1000))
+min_rank(desc(c(50, 100, 1000)))
+```
+
+### Exercise - Ranks
+
+Let's practice by ranking the entire dataset based on `prop`. In the chunk below, use `mutate()` and `min_rank()` to rank each row based on its `prop` value, with the highest values receiving the top ranks.
+
+```{r mutate-2, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r mutate-2-solution}
+babynames |> 
+  mutate(rank = min_rank(desc(prop)))
+```
+
+### Rankings by group
+
+In the previous exercise, we assigned rankings across the entire data set. For example, with the exception of ties, there was only one 1 _in the entire data set_, only one 2, and so on. To calculate a popularity score across years, you will need to do something different: you will need to assign rankings within groups of year and sex. Now there will be one 1 _in each group of year and sex_.
+
+To rank within groups, combine `mutate()` with `group_by()`. Like dplyr's other functions, `mutate()` will treat grouped data in a group-wise fashion.
+
+Add `group_by()` to our code from above, to calculate ranking within year and sex combinations. Do you notice the numbers change?
+
+```{r mutate-3, exercise = TRUE, exercise.setup = "bnames"}
+babynames |> 
+  mutate(rank = min_rank(desc(prop)))
+```
+
+```{r mutate-3-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  mutate(rank = min_rank(desc(prop)))
+```
+
+### The most popular names by yearly rankings
+
+`group_by()` provides the missing piece for calculating our second measure of popularity. In the code chunk below,
+
+1. Group `babynames` by `year` and `sex`
+1. Assign a rank to each name based on descending values of `prop`
+1. Regroup the data by `name` and `sex`
+1. Compute the median ranking for each name and sex combination
+1. Arrange the results so the names with the lowest sum appear at the top of the data set.
+
+```{r mutate-4, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+
+```{r mutate-4-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  mutate(rank = min_rank(desc(prop))) |> 
+  group_by(name, sex) |> 
+  summarize(score = median(rank)) |> 
+  arrange(score)
+```
+
+```{r mutate-4-check}
+"Congratulations! Our second provides a different picture of popularity. Here we see names that have been consistently popular over time, including new entries like Elizabeth and Thomas."
+```
+
+### Recap
+
+In this primer, you learned three functions for isolating data within a table: 
+
+* `select()`
+* `filter()`
+* `arrange()`
+
+You also learned three functions for deriving new data from a table: 
+
+* `summarize()`
+* `group_by()`
+* `mutate()`
+
+Together these six functions create a _grammar_ of data manipulation, a system of verbs that you can use to manipulate data in a sophisticated, step-by-step way. These verbs target the everyday tasks of data analysis. No matter which types of data you work with, you will discover that:
+
+1. _Data sets often contain more information than you need_
+1. _Data sets imply more information than they display_
+
+The six dplyr functions help you work with these realities by isolating and revealing the information contained in your data. In fact, dplyr provides more than six functions for this grammar: dplyr comes with several functions that are variations on the themes of `select()`, `filter()`, `summarize()`, and `mutate()`. Each follows the same pipeable syntax that is used throughout dplyr. If you are interested, you can learn more about these peripheral functions in the [dplyr cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf).
+
+## Challenges
+
+Apply your knowledge of dplyr to do the following two challenges.
+
+### Number Ones Challenge - boys
+
+How many distinct boys names acheived a rank of Number 1 in any year?
+
+```{r ones-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r ones-1-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  mutate(rank = min_rank(desc(n))) |> 
+  filter(rank == 1, sex == "M") |> 
+  ungroup() |> 
+  summarize(distinct = n_distinct(name))
+```
+
+### Number Ones Challenge - girls
+
+How many distinct girls names acheived a rank of Number 1 in any year?
+
+```{r ones-2, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r ones-2-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  mutate(rank = min_rank(desc(n))) |> 
+  filter(rank == 1, sex == "F") |> 
+  ungroup() |> 
+  summarize(distinct = n_distinct(name))
+```
+
+### Number Ones Challenge - Plot
+
+`number_ones` is a vector of every boys name to achieve a rank of one. 
+
+```{r echo = TRUE}
+number_ones
+```
+
+Use `number_ones` with `babynames` to recreate the plot below, which shows the popularity over time for every name in `number_ones` as the name for a boy.
+
+```{r, fig.height=5, out.width="100%"}
+babynames |> 
+  filter(name %in% number_ones, sex == "M") |> 
+  ggplot() +
+    geom_line(aes(x = year, y = prop, color = name))
+```
+
+```{r ones-3, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r ones-3-solution}
+babynames |> 
+  filter(name %in% number_ones, sex == "M") |> 
+  ggplot() +
+    geom_line(aes(x = year, y = prop, color = name))
+```
+
+### Name Diversity Challenge - number of unique names
+
+Which gender uses more names?
+
+In the chunk below, calculate and then plot the number of distinct names used each year for boys and girls. Place year on the x axis, the number of distinct names on they y axis and color the lines by sex.
+
+```{r diversity-1, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+
+```{r diversity-1-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  summarize(n_names = n_distinct(name)) |> # or summarize(n_names = n())
+  ggplot() +
+    geom_line(aes(x = year, y = n_names, color = sex))
+```
+
+### Name Diversity Challenge - number of boys and girls
+
+Let's make sure that we're not confounding our search with the total number of boys and girls born each year. With the chunk below, calculate and then plot over time the total number of boys and girls by year. Is the relative number of boys and girls constant?
+
+```{r diversity-2, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+```{r diversity-2-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  summarize(n = sum(n)) |> 
+  ggplot() +
+    geom_line(aes(x = year, y = n, color = sex))
+```
+
+### Name Diversity Challenge - children per name
+
+Hmm. Sometimes there are more girls and sometimes more boys. In addition, the entire population has been grown over time. Let's account for this weith a new metric: the average number of children per name.
+
+If girls have a smaller number of children per name, that would imply that they use more names overall (and vice versa).
+
+In the chunk below, calculate and plot the average number of children per name by year and sex over time. How do you interpret the results?
+
+```{r diversity-3, exercise = TRUE, exercise.setup = "bnames"}
+
+```
+
+
+```{r diversity-3-solution}
+babynames |> 
+  group_by(year, sex) |> 
+  summarize(per_name = mean(n)) |> 
+  ggplot() +
+    geom_line(aes(x = year, y = per_name, color = sex))
+```
+
+```{r diversity-3-check}
+"Good job! In recent years, there are fewer girls (on average) given any particular name than boys. This suggests that there is more variety in girls names than boys names once you account for population. Interestingly, the number of children per name has gone down steeply for each gender since the 1960's, even though the total population has continued to increase. This suggests that there is a greater variety of names today than in the past."
+```
+
+### Where to from here
+
+Congratulations! You can use dplyr's grammar of data manipulation to access any data associated with a table---even if that data is not currently displayed by the table.
+
+In other words, you now know how to look at data in R, as well as how to access specific values, calculate summary statistics, and compute new variables. When you combine this with the visualization skills that you learned in the tutorial on data visualization basics, you have everything that you need to explore data in R.
+
