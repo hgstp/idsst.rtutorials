@@ -432,7 +432,7 @@ arrange(babynames, desc(n))
 
 ### Steps
 
-Notice how each dplyr function takes a data frame as input and returns a data frame as output. This makes the functions easy to use in a step by step fashion. For example, you could:
+Notice how each `dplyr` function takes a data frame as input and returns a data frame as output. This makes the functions easy to use in a step by step fashion. For example, you could:
 
 1. Filter `babynames` to just boys born in 2017,
 2. select the `name` and `n` columns from the result, and
@@ -468,11 +468,11 @@ babynames |>
   arrange(desc(n))
 ```
 
-As you read the code, pronounce `|>` as "then." You'll notice that dplyr makes it easy to read pipes; each function name is a verb, making our code resemble the statement: 
+As you read the code, pronounce `|>` as "then." You'll notice that `dplyr` makes it easy to read pipes; each function name is a verb, making our code resemble the statement: 
 
 "Take `babynames`, _then_ filter it by name and sex, _then_ select the name and n columns, _then_ arrange the results by descending values of n."
 
-dplyr also makes it easy to write pipes. Each dplyr function returns a data frame that can be piped into another dplyr function, which will accept the data frame as its first argument. In fact, dplyr functions are written with pipes in mind: each function does one simple task. dplyr expects you to use pipes to combine these simple tasks to produce sophisticated results.
+dplyr also makes it easy to write pipes. Each `dplyr` function returns a data frame that can be piped into another `dplyr` function, which will accept the data frame as its first argument. In fact, `dplyr` functions are written with pipes in mind: each function does one simple task. `dplyr` expects you to use pipes to combine these simple tasks to produce sophisticated results.
 
 ### Exercise - Pipes
 
@@ -715,8 +715,8 @@ babynames |>
 
 The `group_by()` function, on its own, doesn't perform any calculations or transformations. Instead, it establishes grouping criteria that are stored as metadata alongside the original dataset. If your dataset is a tibble, R will indicate that it is grouped at the top of the tibble display. Other than this grouping information, the data itself remains unchanged.
 
-However, when you apply a dplyr function like `summarize()` on grouped data, it executes the function in a groupwise manner.
-Instead of calculating a single summary for the entire data set, dplyr computes separate summaries for each group and returns them as a single data frame. The data frame will contain the summary columns as well as the columns contained in the grouping criteria, which are essential for assigning the various summary values to the correct group.
+However, when you apply a `dplyr` function like `summarize()` on grouped data, it executes the function in a groupwise manner.
+Instead of calculating a single summary for the entire data set, `dplyr` computes separate summaries for each group and returns them as a single data frame. The data frame will contain the summary columns as well as the columns contained in the grouping criteria, which are essential for assigning the various summary values to the correct group.
 
 ```{r grouping-1, exercise = TRUE, exercise.eval = TRUE}
 babynames |>
@@ -773,7 +773,6 @@ babynames |>
   group_by(name)
 ```
 
-> __Conclusion:__ With `group_by()`, `summarize()`, and `ungroup()`, you have the tools needed to take groupwise summaries of your data at different levels of grouping.
 
 ### `.by` argument
 
@@ -785,12 +784,14 @@ babynames |>
   summarize(total = sum(n), .by = c(year, sex))
 ```
 
+> __Conclusion:__ With `group_by()`, `summarize()`, and `ungroup()`, you have the tools needed to take groupwise summaries of your data at different levels of grouping.
+
 
 ### The most popular names by total children
 
-You now know enough to calculate the most popular names by total children (it may take some strategizing, but you can do it!). 
+You now have enough knowledge to calculate the most popular names by total children; it may require some strategizing, but you can do it!
 
-In the code chunk below, use `group_by()`, `summarize()`, and `arrange()` to display the ten most popular names. Compute popularity as the total number of children of a single gender given a name. In other words, the total number of boys named "Kelly" should be computed separately from the total number of girls named "Kelly".
+In the code chunk below, use the functions `group_by()`, `summarize()`, and `arrange()` to display the ten most popular names. Popularity should be calculated as the total number of children of each gender given a specific name. For example, the total number of boys named "Kelly" should be counted separately from the total number of girls named "Kelly".
 
 ```{r popular-1, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -805,15 +806,15 @@ babynames |>
 
 ### The history of the most popular names by total children
 
-Let's examine how the popularity of popular names has changed over time. To help us, I've made `top_10`, which is a version of `babynames` that is trimmed down to just the ten most popular names from above.
+Let's explore how the popularity of names has changed over time. To assist in doing so, we have created `top_10`, a version of `babynames` that includes only the ten most popular names from above.
 
-```{r}
+```{r, echo=TRUE}
 top_10
 ```
 
 ### Exercise - Proportions for popular names
 
-Use the code block below to plot a line graph of `prop` vs `year` for each name in `top_10`. Be sure to color the lines by name to make the graph interpretable.
+Use the code chunk below to plot a line graph of `prop` vs `year` for each name in `top_10`. Be sure to color the lines by `name` to make the graph interpretable.
 
 ```{r popular-2, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -849,9 +850,9 @@ top_10 |>
 
 Why might there be a difference between the _proportion_ of children who receive a name over time, and the _number_ of children who receive the name?
 
-An obvious culprit could be the total number of children born per year. If more children are born each year, the number of children who receive a name could grow even if the proportion of children given that name declines.
+A clear potential cause could be the total number of children born each year. If more children are born each year, the number of children who receive a name could grow even if the proportion of children given that name declines.
 
-Test this theory in the chunk below. Use `babynames` and groupwise summaries to compute the total number of children born each year and then to plot that number vs. year in a line graph.
+Test this theory in the chunk below. Use `babynames` and groupwise summaries to compute the total number of children born each year and then to plot that number vs. year in a line graph. Consider `sex` when creating your line graph; it should display two lines, one for girls and another for boys.
 
 ```{r population, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -859,15 +860,15 @@ Test this theory in the chunk below. Use `babynames` and groupwise summaries to 
 
 ```{r population-solution}
 babynames |> 
-  group_by(year) |> 
+  group_by(sex, year) |> 
   summarize(n = sum(n)) |> 
   ggplot() +
-    geom_line(aes(x = year, y = n))
+    geom_line(aes(x = year, y = n, color = sex))
 ```
 
 ### Popularity based on rank
 
-The graph above suggests that our first definition of popularity is confounded with population growth: the most popular names in 2015 likely represent far more children than the most popular names in 1880. The total number of children given a name may still be the best definition of popularity to use, but it will overweight names that have been popular in recent years.
+The graph above suggests that our first definition of popularity is confounded with population growth. The most popular names in 2015 likely represent many more children than the most popular names in 1970. While the total number of children given a name may still be the best measure of popularity, it tends to give disproportionate weight to names that have gained popularity in more recent years.
 
 There is also evidence that our definition is confounded with a gender effect: only one of the top ten names was a girl's name.
 
@@ -880,11 +881,11 @@ To use this definition, we could:
 1. Compute the rank of each name within each year and gender. The most popular name would receive the rank 1 and so on. 
 2. Find the median rank for each name, accounting for gender. The names with the lowest median would be the names that "consistently rank among the top names from year to year."
 
-To do this, we will need to learn one last dplyr function.
+To do this, we will need to learn one last `dplyr` function.
 
 ### mutate()
 
-`mutate()` uses a data frame to compute new variables. It then returns a copy of the data frame that includes the new variables. For example, we can use `mutate()` to compute a `percent` variable for `babynames`. Here percent is just the `prop` multiplied by 100 and rounded to two decimal places.
+`mutate()` uses a data frame to compute new variables. It then returns a copy of the data frame that includes the new variables. For example, we can use `mutate()` to compute a `percent` variable for `babynames`. Here `percent` is just `prop` multiplied by 100 and rounded to two decimal places.
 
 ```{r echo = TRUE}
 babynames |>
@@ -895,7 +896,7 @@ babynames |>
 
 The syntax of mutate is similar to `summarize()`. `mutate()` takes first a data frame, and then one or more named arguments that are set equal to R expressions. `mutate()` turns each named argument into a column. The name of the argument becomes the column name and the result of the R expression becomes the column contents.
 
-Use `mutate()` in the chunk below to create a `births` column, the result of dividing `n` by `prop`. You can think of `births` as a sanity check; it uses each row to double check the number of boys or girls that were born each year. If all is well, the numbers will agree across rows (allowing for rounding errors).
+Use `mutate()` in the chunk below to create a `births` column, which should contain the result of dividing `n` by `prop`. You can think of `births` as a way to verify the data; it allows you to check the number of boys or girls born each year based on the information in each row. If everything is correct, the results should be consistent across rows (taking rounding errors into account) within the same year.
 
 ```{r mutate-1, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -935,6 +936,27 @@ min_rank(c(50, 100, 1000))
 min_rank(desc(c(50, 100, 1000)))
 ```
 
+
+<div style="background-color: #e6e6e6; border:3px solid black">
+__Remark:__ The term `min` in `min_rank()` refers to how the function handles ties. Consider the observation set `c(50, 100, 100)`. The last two observations, which are equal, should receive the same rank. However, it isn't immediately clear what that rank value should be. 
+R's default `rank()` function averages ranks 2 and 3 for the last two observations.
+
+```{r, echo=TRUE}
+rank(c(50, 100, 100))
+```
+
+The `dplyr` rank function `min_rank()` assigns the smallest possible value:
+
+```{r, echo=TRUE}
+min_rank(c(50, 100, 100))
+```
+
+
+
+</div>
+
+
+
 ### Exercise - Ranks
 
 Let's practice by ranking the entire dataset based on `prop`. In the chunk below, use `mutate()` and `min_rank()` to rank each row based on its `prop` value, with the highest values receiving the top ranks.
@@ -967,22 +989,38 @@ babynames |>
   mutate(rank = min_rank(desc(prop)))
 ```
 
+
+Now try to do the same (compute ranks within each year and separately for each `sex`), but use the `.by` argument of `mutate()` this time.
+
+
+```{r mutate-4, exercise = TRUE, exercise.setup = "bnames"}
+babynames |> 
+  mutate(rank = min_rank(desc(prop)))
+```
+
+```{r mutate-4-solution}
+babynames |> 
+  mutate(rank = min_rank(desc(prop)), .by = c(year, sex))
+```
+
+
+
 ### The most popular names by yearly rankings
 
 `group_by()` provides the missing piece for calculating our second measure of popularity. In the code chunk below,
 
-1. Group `babynames` by `year` and `sex`
-1. Assign a rank to each name based on descending values of `prop`
-1. Regroup the data by `name` and `sex`
-1. Compute the median ranking for each name and sex combination
-1. Arrange the results so the names with the lowest sum appear at the top of the data set.
+1. Group `babynames` by `year` and `sex`, then
+1. assign a rank to each `name` based on descending values of `prop`, then
+1. regroup the data by `name` and `sex`, then
+1. compute the median ranking for each name and sex combination, then
+1. arrange the results so the names with the lowest sum appear at the top of the data set.
 
-```{r mutate-4, exercise = TRUE, exercise.setup = "bnames"}
+```{r mutate-5, exercise = TRUE, exercise.setup = "bnames"}
 
 ```
 
 
-```{r mutate-4-solution}
+```{r mutate-5-solution}
 babynames |> 
   group_by(year, sex) |> 
   mutate(rank = min_rank(desc(prop))) |> 
@@ -991,13 +1029,13 @@ babynames |>
   arrange(score)
 ```
 
-```{r mutate-4-check}
-"Congratulations! Our second provides a different picture of popularity. Here we see names that have been consistently popular over time, including new entries like Elizabeth and Thomas."
+```{r mutate-5-check}
+"Congratulations! Our second appraoch provides a different picture of popularity. Here we see names that have been consistently popular over time, including new entries like Emily and Jacob."
 ```
 
 ### Recap
 
-In this primer, you learned three functions for isolating data within a table: 
+In this tutorial, you learned three functions for isolating data within a table: 
 
 * `select()`
 * `filter()`
@@ -1014,15 +1052,16 @@ Together these six functions create a _grammar_ of data manipulation, a system o
 1. _Data sets often contain more information than you need_
 1. _Data sets imply more information than they display_
 
-The six dplyr functions help you work with these realities by isolating and revealing the information contained in your data. In fact, dplyr provides more than six functions for this grammar: dplyr comes with several functions that are variations on the themes of `select()`, `filter()`, `summarize()`, and `mutate()`. Each follows the same pipeable syntax that is used throughout dplyr. If you are interested, you can learn more about these peripheral functions in the [dplyr cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf).
+The six `dplyr` functions help you work with these realities by isolating and revealing the information contained in your data. 
+In fact, `dplyr` provides more than six functions for this grammar. `dplyr` comes with several functions that are variations on the themes of `select()`, `filter()`, `summarize()`, and `mutate()`. Each follows the same pipeable syntax that is used throughout `dplyr`. If you are interested, you can learn more about these peripheral functions in the [dplyr cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf).
 
 ## Challenges
 
-Apply your knowledge of dplyr to do the following two challenges.
+Apply your knowledge of `dplyr` to do the following two challenges.
 
 ### Number Ones Challenge - boys
 
-How many distinct boys names acheived a rank of Number 1 in any year?
+How many distinct boys names achieved a rank of Number 1 in any year?
 
 ```{r ones-1, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -1047,12 +1086,17 @@ How many distinct girls names acheived a rank of Number 1 in any year?
 
 ```{r ones-2-solution}
 babynames |> 
-  group_by(year, sex) |> 
-  mutate(rank = min_rank(desc(n))) |> 
+  mutate(rank = min_rank(desc(n)), .by = c(year, sex)) |> 
   filter(rank == 1, sex == "F") |> 
-  ungroup() |> 
   summarize(distinct = n_distinct(name))
 ```
+
+
+```{r ones-2-check}
+"This time the solution uses the .by argument of mutate(). Both approaches lead to the same result. So, it's up to you which one you prefer."
+```
+
+
 
 ### Number Ones Challenge - Plot
 
@@ -1062,7 +1106,7 @@ babynames |>
 number_ones
 ```
 
-Use `number_ones` with `babynames` to recreate the plot below, which shows the popularity over time for every name in `number_ones` as the name for a boy.
+Use `number_ones` with `babynames` to recreate the plot below, showing the popularity over time for every name in `number_ones` as a boy's name.
 
 ```{r, fig.height=5, out.width="100%"}
 babynames |> 
@@ -1086,7 +1130,7 @@ babynames |>
 
 Which gender uses more names?
 
-In the chunk below, calculate and then plot the number of distinct names used each year for boys and girls. Place year on the x axis, the number of distinct names on they y axis and color the lines by sex.
+In the chunk below, calculate and then plot the number of distinct names used each year for boys and girls. Place the `year` on the x-axis and the number of distinct names on the y-axis. Use different colors for the lines representing each `sex`.
 
 ```{r diversity-1, exercise = TRUE, exercise.setup = "bnames"}
 
@@ -1101,25 +1145,10 @@ babynames |>
     geom_line(aes(x = year, y = n_names, color = sex))
 ```
 
-### Name Diversity Challenge - number of boys and girls
-
-Let's make sure that we're not confounding our search with the total number of boys and girls born each year. With the chunk below, calculate and then plot over time the total number of boys and girls by year. Is the relative number of boys and girls constant?
-
-```{r diversity-2, exercise = TRUE, exercise.setup = "bnames"}
-
-```
-
-```{r diversity-2-solution}
-babynames |> 
-  group_by(year, sex) |> 
-  summarize(n = sum(n)) |> 
-  ggplot() +
-    geom_line(aes(x = year, y = n, color = sex))
-```
 
 ### Name Diversity Challenge - children per name
 
-Hmm. Sometimes there are more girls and sometimes more boys. In addition, the entire population has been grown over time. Let's account for this weith a new metric: the average number of children per name.
+Let's introduce a new metric: _the average number of children per name_.
 
 If girls have a smaller number of children per name, that would imply that they use more names overall (and vice versa).
 
@@ -1139,12 +1168,12 @@ babynames |>
 ```
 
 ```{r diversity-3-check}
-"Good job! In recent years, there are fewer girls (on average) given any particular name than boys. This suggests that there is more variety in girls names than boys names once you account for population. Interestingly, the number of children per name has gone down steeply for each gender since the 1960's, even though the total population has continued to increase. This suggests that there is a greater variety of names today than in the past."
+"Good job! In recent years, there are fewer girls (on average) given any particular name than boys. This suggests that there is more variety in girls names than boys names once you account for population."
 ```
 
 ### Where to from here
 
-Congratulations! You can use dplyr's grammar of data manipulation to access any data associated with a table---even if that data is not currently displayed by the table.
+Congratulations! You can use `dplyr`'s grammar of data manipulation to access any information contained in a data table---even if that information is not currently displayed by the table.
 
-In other words, you now know how to look at data in R, as well as how to access specific values, calculate summary statistics, and compute new variables. When you combine this with the visualization skills that you learned in the tutorial on data visualization basics, you have everything that you need to explore data in R.
+In other words, you now know how to look at data in R, as well as how to access specific values, calculate summary statistics, and compute new variables. When you combine this with the visualization skills that you learned in the tutorial on data visualization, you have everything that you need to explore data in R.
 
