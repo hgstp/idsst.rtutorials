@@ -567,7 +567,7 @@ babynames |>
 
 ### Useful functions
 
-dplyr provides three functions that can help you reveal the information implied by your data: 
+`dplyr` provides three functions that can help you reveal the information implied by your data: 
 
 * `summarize()`  
 * `group_by()`  

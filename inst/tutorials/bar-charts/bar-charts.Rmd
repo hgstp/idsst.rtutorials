@@ -1,5 +1,5 @@
 ---
-title: "Bar Charts"
+title: "Explore categorical data"
 output: 
   learnr::tutorial:
     progressive: true
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(error = TRUE, out.width = "100%")
 
 ## Welcome
 
-This tutorial will show you how to make and enhance **bar charts** with the ggplot2 package. You will learn how to:
+This tutorial will show you how to make **bar charts** and use them to explore the distribution of categorical data. You will learn how to:
 
 * make and interpret bar charts
 * customize bar charts with **aesthetics** and **parameters**
@@ -31,7 +31,39 @@ This tutorial will show you how to make and enhance **bar charts** with the ggpl
 
 The tutorial is adapted from _R for Data Science_ by Hadley Wickham and Garrett Grolemund, published by O’Reilly Media, Inc., 2016, ISBN: 9781491910399. You can purchase the book at [shop.oreilly.com](http://shop.oreilly.com/product/0636920034407.do).
 
-The tutorial uses the ggplot2 and dplyr packages..
+The tutorial uses the `ggplot2` and `dplyr` packages. Click the Next Topic button to begin.
+
+## Diamonds data
+
+For this tutorial, we will use the `diamonds` dataset found in the `ggplot2` package. The dataset contains the prices and other attributes of almost 54,000 diamonds. 
+
+```{r}
+diamonds
+```
+
+The variables are as follows:
+
+
++ `carat`: weight of the diamond (0.2–5.01)
+
++ `cut`: quality of the cut (Fair, Good, Very Good, Premium, Ideal)
+
++ `color`: diamond colour, from D (best) to J (worst)
+
++ `clarity`: measurement of how clear the diamond is (I1 (worst), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (best))
+
++ `depth`: total depth percentage = z / mean(x, y) = 2 * z / (x + y) (43–79)
+
++ `table`: width of top of diamond relative to widest point (43–95)
+
++ `price`: given in US dollars ($326–$18,823)
+
++ `x`: length in mm (0–10.74)
+
++ `y`: width in mm (0–58.9)
+
++ `z`: depth in mm (0–31.8)
+
 
 ## Bar Charts
 
