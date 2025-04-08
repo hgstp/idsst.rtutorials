@@ -22,22 +22,58 @@ knitr::opts_chunk$set(error = TRUE, out.width = "100%")
 
 ## Welcome
 
-This tutorial will show you how to make and enhance **bar charts** with the ggplot2 package. You will learn how to:
+This tutorial will show you how to make **bar charts** and use them to explore the distribution of categorical data. You will learn how to:
 
 * make and interpret bar charts
 * customize bar charts with **aesthetics** and **parameters**
 * use **position adjustments**
 * use **facets** to create subplots
 
+In addition, the tutorial discusses how to compute the frequency distribution of a categorical variable.
+
+
+
 The tutorial is adapted from _R for Data Science_ by Hadley Wickham and Garrett Grolemund, published by O’Reilly Media, Inc., 2016, ISBN: 9781491910399. You can purchase the book at [shop.oreilly.com](http://shop.oreilly.com/product/0636920034407.do).
 
-The tutorial uses the ggplot2 and dplyr packages..
+The tutorial uses the `ggplot2` and `dplyr` packages. Click the Next Topic button to begin.
+
+## Diamonds data
+
+For this tutorial, we will use the `diamonds` dataset found in the `ggplot2` package. The dataset contains the prices and other attributes of almost 54,000 diamonds. 
+
+```{r}
+diamonds
+```
+
+The variables are as follows:
+
+
++ `carat`: weight of the diamond (0.2–5.01)
+
++ `cut`: quality of the cut (Fair, Good, Very Good, Premium, Ideal)
+
++ `color`: diamond colour, from D (best) to J (worst)
+
++ `clarity`: measurement of how clear the diamond is (I1 (worst), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (best))
+
++ `depth`: total depth percentage = z / mean(x, y) = 2 * z / (x + y) (43–79)
+
++ `table`: width of top of diamond relative to widest point (43–95)
+
++ `price`: given in US dollars ($326–$18,823)
+
++ `x`: length in mm (0–10.74)
+
++ `y`: width in mm (0–58.9)
+
++ `z`: depth in mm (0–31.8)
+
 
 ## Bar Charts
 
 ### How to make a bar chart
 
-To make a bar chart with ggplot2, add `geom_bar()` to the ggplot2 template. For example, the code below plots a bar chart of the `cut` variable in the `diamonds` dataset, which comes with ggplot2. 
+To make a bar chart with ggplot2, we have to use `geom_bar()`. For example, the code below plots a bar chart of the `cut` variable in the `diamonds` dataset, which comes with ggplot2. 
 
 ```{r out.width = "80%"}
 ggplot(data = diamonds) +
@@ -46,7 +82,7 @@ ggplot(data = diamonds) +
 
 ### The y axis
 
-You should not supply a $y$ aesthetic when you use `geom_bar()`; ggplot2 will count how many times each $x$ value appears in the data, and then display the counts on the $y$ axis. So, for example, the plot above shows that over 20,000 diamonds in the data set had a value of `Ideal`.
+When using `geom_bar()`, you should not provide a $y$ aesthetic. Instead, ggplot2 will automatically count how many times each $x$ value occurs in the data and present those counts on the $y$ axis. For instance, the plot above illustrates that there are over 20,000 diamonds in the dataset with a value of `Ideal`.
 
 You can compute this information manually with the `count()` function from the dplyr package.
 
@@ -64,17 +100,12 @@ ggplot(data = pressure) +
   geom_col(mapping = aes(x = temperature, y = pressure))
 ```
 
-### geom_col() data
+When you use `geom_col()`, your $x$ and $y$ values should have a one to one relationship, as they do in the `pressure` data set.
 
-When you use `geom_col()`, your $x$ and $y$ values should have a one to one relationship, as they do in the `pressure` data set (i.e. each value of `temperature` is paired with a single value of `pressure`).
-
-```{r}
-pressure
-```
 
 ### Exercise 1 - Make a bar chart
 
-Use the code chunk below to plot the distribution of the `color` variable in the `diamonds` data set, which comes in the ggplot2 package.
+Use the code chunk below to plot the distribution of the `color` variable in the `diamonds` data set.
 
 ```{r r1, exercise = TRUE}
 
@@ -113,22 +144,8 @@ quiz(caption = "Bar charts",
 )
 ```
 
-### Exercise 3 - What went wrong?
 
-Diagnose the error below and then fix the code chunk to make a plot.
-
-```{r r3, exercise = TRUE, exercise.eval = TRUE, error = TRUE}
-ggplot(data = pressure) +
-  geom_bar(mapping = aes(x = temperature, y = pressure))
-```
-
-```{r r3-solution}
-ggplot(data = pressure) +
-  geom_col(mapping = aes(x = temperature, y = pressure))
-```
-
-
-### Exercise 4 - count() and col()
+### Exercise 3 - count() and col()
 
 Recreate the bar graph of `color` from exercise one, but this time first use `count()` to manually compute the heights of the bars. Then use `geom_col()` to plot the results as a bar graph. Does your graph look the same as in exercise one?
 
@@ -153,7 +170,7 @@ diamonds |>
 * color
 * fill
 * linetype
-* size
+* linewidth
 
 One of these, color, creates the most surprising results. Predict what the code below will return and then run it.
 
@@ -168,15 +185,15 @@ The color aesthetic controls the outline of each bar in your bar plot, which may
 
 ```{r echo = FALSE, out.width="50%"}
 ggplot(data = diamonds) +
-  geom_bar(mapping = aes(x = cut, color = cut), size = 1) + 
-  ggtitle("color = cut")
+  geom_bar(mapping = aes(x = cut, color = cut), linewidth = 1) + 
+  labs(title = "color = cut")
 
 ggplot(data = diamonds) +
   geom_bar(mapping = aes(x = cut, fill = cut)) + 
-  ggtitle("fill = cut")
+  labs(title = "fill = cut")
 ```
 
-Use the code chunk below to experiment with fill, along with other `geom_bar()` aesthetics, like alpha, linetype, and size.
+Use the code chunk below to experiment with fill, along with other `geom_bar()` aesthetics, like alpha, linetype, and linewidth.
 
 ```{r color2, exercise = TRUE, exercise.eval = FALSE}
 ggplot(data = diamonds) +
@@ -192,19 +209,19 @@ ggplot(data = diamonds) +
   geom_bar(mapping = aes(x = cut, fill = cut), width = 0.9)
 ```
 
-Notice that width is a _parameter_, not an aesthetic mapping. Hence, you should set width _outside_ of the `aes()` function.
+Notice that width is a _setting_, not an aesthetic mapping. Hence, you should set width _outside_ of the `aes()` function.
 
-### Exercise 5 - aesthetics
+### Exercise 4 - aesthetics
 
-Create a colored bar chart of the `class` variable from the `mpg` data set, which comes with ggplot2. Map the interior color of each bar to `class`.
+Create a colored bar chart of the `clarity` variable. Map the interior color of each bar to `clarity`.
 
 ```{r r5, exercise = TRUE}
 
 ```
 
 ```{r r5-solution}
-ggplot(data = mpg) +
-  geom_bar(mapping = aes(x = class, fill = class))
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = clarity, fill = clarity))
 ```
 
 ## Position adjustments
@@ -274,7 +291,7 @@ ggplot(data = diamonds) +
 
 Position adjustments tell ggplot2 how to re-distribute objects when they overlap. `position = "identity"` is the "adjustment" that let's objects overlap each other. It is a bad choice for bar graphs because the result looks like a stacked bar chart, even though it is not. 
 
-### Exercise 6 - Positions
+### Exercise 5 - Positions
 
 Use the code chunk to recreate the plot you see below. Remember: `color` is the name of a variable in `diamonds` (not to be confused with an aesthetic).
 
@@ -292,7 +309,7 @@ ggplot(data = diamonds) +
   geom_bar(mapping = aes(x = color, fill = clarity), position = "fill", width = 1)
 ```
 
-### Exercise 7 - Positions
+### Exercise 6 - Positions
 
 Use the code chunk to recreate the plot you see below. Remember: `color` is the name of a variable in `diamonds` (not to be confused with an aesthetic).
 
@@ -310,7 +327,7 @@ ggplot(data = diamonds) +
   geom_bar(mapping = aes(x = color, fill = cut), position = "dodge")
 ```
 
-### Exercise 8 - position = "identity"
+### Exercise 7 - position = "identity"
 
 ```{r echo = FALSE, out.width = "100%"}
 ggplot(data = diamonds) +
@@ -397,19 +414,32 @@ ggplot(data = diamonds) +
   facet_wrap( ~ cut)
 ```
 
-### scales
+### Joint frequency distribution
 
-By default, each facet in your plot will share the same $x$ and $y$ ranges. You can change this by adding a `scales` argument to `facet_wrap()` or `facet_grid()`.
+The plot
 
-* `scales = "free"` will let the $x$ and $y$ range of each facet vary
-* `scales = "free_x"` will let the $x$ range of each facet vary, but not the $y$ range
-* `scales = "free_y"` will let the $y$ range of each facet vary, but not the $x$ range. This is a convenient way to compare the shapes of different distributions:
+```{r facet5}
+ggplot(data = diamonds) +
+  geom_bar(mapping = aes(x = color)) +
+  facet_wrap(~ cut)
+```
 
-    ```{r}
-    ggplot(data = diamonds) +
-      geom_bar(mapping = aes(x = color, fill = cut)) +
-      facet_wrap( ~ cut, scales = "free_y")
-    ```
+visualizes the joint frequency distribution of `color` and `cut`. As we have used `count()` to compute the marginal frequencies, we can also use it to compute the joint frequencies.
+
+
+### Exercise 8 - Compute joint frequency distribution.
+
+Use `count()` to compute the joint frequency distribution of `color` and `cut`.
+
+```{r r8, exercise = TRUE}
+
+```
+
+```{r r8-solution}
+diamonds |> 
+  count(color, cut)
+
+```
 
 
 ### Recap
