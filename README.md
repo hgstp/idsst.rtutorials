@@ -8,19 +8,16 @@
 
 `idsst.rtutorials` contains the R tutorials
 
-- bar-charts
 - boxplots
 - customize
-- deriving
+- data-and-visualization
+- data-wrangling
 - exploratory-data-analysis
+- explore-cat-data
 - histograms
-- isolating
 - line-graphs
 - overplotting
 - programming-basics
-- scatterplots
-- tibbles
-- visualization-basics
 
 ## Installation
 
