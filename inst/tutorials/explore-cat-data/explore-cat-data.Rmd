@@ -442,6 +442,87 @@ diamonds |>
 ```
 
 
+## Counts
+
+### geom_count()
+
+Boxplots provide an efficient way to explore the interaction of a continuous variable and a categorical variable. But what if you have two categorical variables?
+
+You can see how observations are distributed across two categorical variables with `geom_count()`. `geom_count()` draws a point at each combination of values from the two variables. The size of the point is mapped to the number of observations with this combination of values. Rare combinations will have small points, frequent combinations will have large points.
+
+```{r  out.width = "80%", echo = FALSE, message = FALSE}
+ggplot(data = diamonds) +
+  geom_count(mapping = aes(x = color, y = clarity))
+```
+
+### Exercise 9 - Count plots
+
+Use `geom_count()` to plot the interaction of the `cut` and `clarity` variables in the `diamonds` data set.
+
+```{r r9, exercise = TRUE}
+
+```
+
+```{r r9-solution}
+ggplot(data = diamonds) +
+  geom_count(mapping = aes(x = cut, y = clarity))
+```
+
+### count
+
+You can use the `count()` function in the **dplyr** package to compute the count values displayed by `geom_count()`. To use `count()`, pass it a data frame and then the names of zero or more variables in the data frame. `count()` will return a new table that lists how many observations occur with each possible combination of the listed variables.
+
+So for example, the code below returns the counts that you visualized in Exercise 9.
+
+```{r}
+ diamonds |> 
+   count(cut, clarity)
+```
+
+### Heat maps
+
+Heat maps provide a second way to visualize the relationship between two categorical variables. They work like count plots, but use a fill color instead of a point size, to display the number of observations in each combination.
+
+### How to make a heat map
+
+ggplot2 does not provide a geom function for heat maps, but you can construct a heat map by plotting the results of `count()` with `geom_tile()`. 
+
+To do this, set the x and y aesthetics of `geom_tile()` to the variables that you pass to `count()`. Then map the fill aesthetic to the `n` variable computed by `count()`. The plot below displays the same counts as the plot in Exercise 9.
+
+```{r}
+ diamonds |> 
+   count(cut, clarity) |> 
+   ggplot() +
+     geom_tile(mapping = aes(x = cut, y = clarity, fill = n))
+```
+
+### Exercise 10 - Make a heat map
+
+Practice the method above by re-creating the heat map below.
+
+```{r echo = FALSE, out.width = "80%"}
+ diamonds |> 
+   count(color, cut) |> 
+   ggplot(mapping = aes(x = color, y = cut)) +
+     geom_tile(mapping = aes(fill = n))
+```
+
+```{r r10, exercise = TRUE}
+
+```
+
+```{r r10-solution}
+ diamonds |> 
+   count(color, cut) |> 
+   ggplot(mapping = aes(x = color, y = cut)) +
+     geom_tile(mapping = aes(fill = n))
+```
+
+```{r r10-check}
+"Good job!"
+```
+
+
 ### Recap
 
 In this tutorial, you learned how to make bar charts; but much of what you learned applies to other types of charts as well. Here's what you should know:
@@ -452,3 +533,6 @@ In this tutorial, you learned how to make bar charts; but much of what you learn
 * You can facet any ggplot2 plot by adding `facet_grid()` or `facet_wrap()` to the plot call.
 
 Bar charts are an excellent way to display the distribution of a categorical variable. In the next tutorial, we'll meet a set of geoms that display the distribution of a continuous variable.
+
+
+Count plots and heat maps help you see how observations are distributed across the interactions of two categorical variables.
