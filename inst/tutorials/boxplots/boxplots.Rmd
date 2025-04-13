@@ -331,6 +331,8 @@ ggplot(data = mpg) +
 'Good job! Can you predict how you would use `draw_quantiles` to draw a horizontal line at a different percentile, like the 60th percentile?.'
 ```
 
+
+
 ## Counts
 
 ### geom_count()
@@ -344,7 +346,7 @@ ggplot(data = diamonds) +
   geom_count(mapping = aes(x = color, y = clarity))
 ```
 
-### Exercise 8 - Count plots
+### Exercise 9 - Count plots
 
 Use `geom_count()` to plot the interaction of the `cut` and `clarity` variables in the `diamonds` data set.
 
@@ -376,7 +378,7 @@ Heat maps provide a second way to visualize the relationship between two categor
 
 ggplot2 does not provide a geom function for heat maps, but you can construct a heat map by plotting the results of `count()` with `geom_tile()`. 
 
-To do this, set the x and y aesthetics of `geom_tile()` to the variables that you pass to `count()`. Then map the fill aesthetic to the `n` variable computed by `count()`. The plot below displays the same counts as the plot in Exercise 8.
+To do this, set the x and y aesthetics of `geom_tile()` to the variables that you pass to `count()`. Then map the fill aesthetic to the `n` variable computed by `count()`. The plot below displays the same counts as the plot in Exercise 9.
 
 ```{r}
  diamonds |> 
@@ -385,7 +387,7 @@ To do this, set the x and y aesthetics of `geom_tile()` to the variables that yo
      geom_tile(mapping = aes(x = cut, y = clarity, fill = n))
 ```
 
-### Exercise 9 - Make a heat map
+### Exercise 10 - Make a heat map
 
 Practice the method above by re-creating the heat map below.
 
