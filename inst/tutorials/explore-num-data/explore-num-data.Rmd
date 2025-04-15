@@ -451,21 +451,21 @@ ggplot(data = diamonds) +
 "Do you notice how many outliers appear in the plot? The boxplot algorithm can identify many outliers if your data is big, perhaps too many. Let's look at ways to suppress the appearance of outliers in your plot."
 ```
 
-### Outliers
+### Median and interquartile range
 
-You can change how outliers look in your boxplot with the parameters `outlier.color`, `outlier.fill`, `outlier.shape`, `outlier.size`, `outlier.stroke`, and `outlier.alpha` (`outlier.shape` takes a number from 1 to 25). 
 
-Unfortunately, you can't tell `geom_boxplot()` to ignore outliers completely, but you can make outliers disappear by setting `outlier.alpha = 0`. Try it in the plot below.
+The last plot visualized the median and the interquartile range of `price` for each of the five levels of `cut`. Use the next chunk to compute those 10 values.
 
-```{r outliers, exercise = TRUE, exercise.eval = TRUE}
-ggplot(data = diamonds) +
-  geom_boxplot(mapping = aes(x = cut, y = price), outlier.shape  = 24, 
-               outlier.color = "white", outlier.stroke = 0.25)
+```{r median, exercise = TRUE, exercise.eval = FALSE}
+
 ```
 
-```{r outliers-solution}
-ggplot(data = diamonds) +
-  geom_boxplot(mapping = aes(x = cut, y = price), outlier.alpha = 0)
+```{r median-solution}
+diamonds |> 
+  group_by(cut) |> 
+  summarize(median = median(price),
+            iqr = IQR(price))
+
 ```
 
 
@@ -579,39 +579,15 @@ ggplot(data = diamonds) +
 
 
 
-
-
-### Exercise 17 - Violin plots
-
-You can further enhance violin plots by adding the parameter `draw_quantiles = c(0.25, 0.5, 0.75)`. This will cause ggplot2 to draw horizontal lines across the violins at the 25th, 50th, and 75th percentiles. These are the same three horizontal lines that are displayed in a boxplot (the 25th and 75th percentiles are the bounds of the box, the 50th percentile is the median).
-
-Add these lines to the violin plot below.
-
-```{r r17, exercise = TRUE, exercise.eval = TRUE}
-ggplot(data = mpg) +
-  geom_violin(mapping = aes(x = class, y = hwy))
-```
-
-```{r r17-solution}
-ggplot(data = mpg) +
-  geom_violin(mapping = aes(x = class, y = hwy), draw_quantiles = c(0.25, 0.5, 0.75))
-```
-
-```{r r17-check}
-'Good job! Can you predict how you would use `draw_quantiles` to draw a horizontal line at a different percentile, like the 60th percentile?.'
-```
-
-
-
 ### Recap
 
-In this tutorial, you learned how to visualize distributions with histograms, frequency polygons, and densities. But what should you look for in these visualizations?
+In the first part of this tutorial, you learned how to visualize distributions with histograms, frequency polygons, and densities. But what should you look for in these visualizations?
 
-* **Look for places with lots of data.** Tall bars reveal the most common values in your data; you can expect these values to be the "typical values" for your variable.
++  **Look for places with lots of data.** Tall bars reveal the most common values in your data; you can expect these values to be the "typical values" for your variable.
 
-* **Look for places with little data.** Short bars reveal uncommon values. These values appear rarely and you might be able to figure out why.
++  **Look for places with little data.** Short bars reveal uncommon values. These values appear rarely and you might be able to figure out why.
 
-* **Look for outliers.** Bars that appear away from the bulk of the data are outliers, special cases that may reveal unexpected insights. 
++  **Look for outliers.** Bars that appear away from the bulk of the data are outliers, special cases that may reveal unexpected insights. 
     
     Sometimes outliers cannot be seen in a plot, but can be inferred from the range of the $x$ axis. For example, many of the plots in this tutorial seemed to extend well past the end of the data. Why? Because the range was stretched to include outliers. When your data set is large, like `diamonds`, the bar that describes an outlier may be invisible (i.e. less than one pixel high).
     
@@ -619,14 +595,11 @@ In this tutorial, you learned how to visualize distributions with histograms, fr
 
 * **Look for shape.** The shape of a histogram can often indicate whether or not a variable behaves according to a known probability distribution.
 
-The most important thing to remember about histograms, frequency polygons, and dotplots is to explore different binwidths. The binwidth of a histogram determines what information the histogram displays. You cannot predict ahead of time which binwidth will reveal unexpected information.
+The most important thing to remember about histograms, is to explore different binwidths. The binwidth of a histogram determines what information the histogram displays. You cannot predict ahead of time which binwidth will reveal unexpected information.
 
 
 
+In the second part we had a look at boxplots. They provide an easy way to look for relationships between a continuous variable and a categorical variable. 
 
-
-
-Boxplots, dotplots and violin plots provide an easy way to look for relationships between a continuous variable and a categorical variable. Violin plots convey a lot of information quickly, but boxplots have a head start in popularity --- they were easy to use when statisticians had to draw graphs by hand.
-
-In any of these graphs, look for distributions, ranges, medians, skewness or anything else that catches your eye to change in an unusual way from distribution to distribution. Often, you can make patterns even more revealing with the `fct_reorder()` function from the forcats package (we'll wait to learn about forcats until after you study factors).
+In boxplots, look for distributions, ranges, medians, skewness or anything else that catches your eye to change in an unusual way from distribution to distribution.
 
