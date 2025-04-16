@@ -6,18 +6,22 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-`idsst.rtutorials` contains the R tutorials
+`idsst.rtutorials` contains several R tutorials. The mandatory tutorials
+for the IDSST course are:
 
-- boxplots
-- customize
+- programming-basics
 - data-and-visualization
 - data-wrangling
 - exploratory-data-analysis
 - explore-cat-data
-- histograms
+- explore-num-data
+
+Additional (not mandatory) topics are discussed in the tutorials:
+
+- customize
 - line-graphs
 - overplotting
-- programming-basics
+- scatterplots
 
 ## Installation
 
