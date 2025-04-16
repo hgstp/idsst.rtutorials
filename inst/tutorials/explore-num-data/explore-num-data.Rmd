@@ -12,6 +12,7 @@ tutorial:
 ```{r setup, include=FALSE}
 library(learnr)
 library(tidyverse)
+library(ggrepel)
 
 checker <- function(label, user_code, check_code, envir_result, evaluate_result, ...) {
   list(message = check_code, correct = TRUE, location = "append")
@@ -576,6 +577,324 @@ ggplot(data = diamonds) +
 ```
 
 
+## Scatterplots
+
+A **scatterplot** displays the relationship between two continuous variables. Scatterplots are one of the most common types of graphs.
+
+In this section we will use in addition to `ggplot2` and `dplyr` also the `ggrepel` package, which also been pre-loaded for your convenience.
+
+
+### Review 1 - geom_point()
+
+In *Data and visualization*, you learned how to make a scatterplot with `geom_point()`.
+
+The code below summarizes the mpg data set and begins to plot the results. Finish the plot with `geom_point()`. Put `mean_cty` on the $x$ axis and `mean_hwy` on the $y$ axis.
+
+```{r r15, exercise = TRUE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot()
+```
+
+```{r r15-solution}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy))
+```
+
+```{r r15-check}
+"Good job! It can be tricky to remember when to use |> and when to use +. Use |> to add one complete step to a pipe of code. Use + to add one more line to a ggplot2 call."
+```
+
+
+### geom_text()
+
+`geom_text()` and `geom_label()` create scatterplots that use words instead of points to display data. Each requires the extra aesthetic `label`, which you should map to a variable that contains text to display for each observation.
+
+Convert the plot below from `geom_point()` to `geom_text()` and map the label aesthetic to the class variable. When you are finished convert the code to `geom_label()` and rerun the plot. Can you spot the difference?
+
+```{r r16, exercise = TRUE, exercise.eval = TRUE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy))
+```
+
+```{r r16-solution}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_text(mapping = aes(x = mean_cty, y = mean_hwy, label = class))
+
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_label(mapping = aes(x = mean_cty, y = mean_hwy, label = class))
+```
+
+```{r r16-check}
+"Good job! geom_text() replaces each point with a piece of text supplied by the label aesthetic. geom_label replaces each point with a textbox. Notice that some pieces of text overlap each other, and others run off the page. We'll soon look at a way to fix this."
+```
+
+
+### geom_smooth()
+
+In the tutorial on data visualization basics, you met `geom_smooth()`, which provides a summarised version of a scatterplot.
+
+`geom_smooth()` uses a model to fit a smoothed line to the data and then visualizes the results. By default, `geom_smooth()` fits a loess smooth to data sets with less than 1,000 observations, and a generalized additive model to data sets with more than 1,000 observations. 
+
+```{r echo = FALSE, out.width="50%", message = FALSE, warning = FALSE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    ggtitle("geom_point)") +
+    ylim(16, 30)
+
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), se = FALSE) +
+    ggtitle("geom_smooth()") +
+    ylim(16, 30)
+```
+
+### method
+
+You can use the `method` parameter of `geom_smooth()` to fit and display other types of model lines. To do this, pass `method` the name of an R modeling function for `geom_smooth()` to use, such as `lm` (for linear models, see Chapter 9 of the lecture notes) or `glm` (for generalized linear models, see Chapter 10 of the lecture notes).
+
+In the code below, use `geom_smooth()` to draw the linear model line that fits the data.
+
+```{r r17, exercise = TRUE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() 
+```
+
+```{r r17-solution}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), method = lm)
+```
+
+```{r r17-check}
+"Good job! Now let's look at a way to make geom_smooth() much more useful."
+```
+
+## Layers
+
+### Add a layer
+
+`geom_smooth()` becomes much more useful when you combine it with `geom_point()` to create a scatterplot that contains both:
+
+* raw data
+* a trend line
+
+In ggplot2, you can add multiple geoms to a plot by adding multiple geom functions to the plot call. For example, the code below creates a plot that contains both points and a smooth line. Imagine what the results will look like in your head, and then run the code to see if you are right.
+
+```{r r18, exercise = TRUE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), method = lm) 
+```
+
+```{r r18-check}
+"Good job! You can add as many geom functions as you like to a plot; but, in practice, a plot will become hard to interpret if it contains more than two or three geoms."
+```
+
+### geom_label_repel()
+
+Do you remember how the labels that we made early overlapped each other and ran off our graph? The `geom_label_repel()` geom from the ggrepel package mitigates these problems by using an algorithm to arrange labels within a plot. It works best in conjunction with a layer of points that displays the true location of each observation.
+
+Use `geom_label_repel()` to add a new layer to our plot below. `geom_label_repel()` requires the same aesthetics as `geom_label()`: x, y, and label (here set to class).
+
+```{r r19, exercise = TRUE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), method = lm)
+```
+
+```{r r19-solution}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), method = lm) +
+    geom_label_repel(mapping = aes(x = mean_cty, y = mean_hwy, label = class))
+```
+
+```{r r19-check}
+"Good job! The ggrepel package also provides geom_text_repel(), which is an analog for geom_text()."
+```
+
+### Code duplication
+
+If you study the solution for the previous exercise, you'll notice a fair amount of duplication. We set the same aesthetic mappings in three different places.
+
+```{r eval = FALSE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), method = lm) +
+    geom_label_repel(mapping = aes(x = mean_cty, y = mean_hwy, label = class))
+```
+
+You should try to avoid duplication whenever you can in code because duplicated code invites typos, is hard to update, and takes longer than needed to write. Thankfully, ggplot2 provides a way to avoid duplication across multiple layers.
+
+### ggplot() mappings
+
+You can set aesthetic mappings in two places within any ggplot2 call. You can set the mappings inside of a geom function, as we've been doing. Or you can set the mappings inside of the `ggplot()` function like below:
+
+```{r out.width = "80%", message = FALSE, warning = FALSE, message = FALSE, warning = FALSE}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point()
+```
+
+### Global vs. Local mappings
+
+ggplot2 will treat any mappings set in the `ggplot()` function as _global_ mappings. Each layer in the plot will inherit and use these mappings. 
+
+ggplot2 will treat any mappings set in a geom function as _local_ mappings. Only the local layer will use these mappings. The mappings will override the global mappings if the two conflict, or add to them if they do not.
+
+This system creates an efficient way to write plot calls:
+
+```{r out.width = "80%", message = FALSE, warning = FALSE, warning = FALSE, message = FALSE}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_smooth(mapping = aes(color = class), se = FALSE)
+```
+
+### Exercise 15
+
+Reduce duplication in the code below by moving as many local mappings into the global mappings as possible. Rerun the new code to ensure that it creates the same plot.
+
+```{r r20, exercise = TRUE, exercise.eval = TRUE}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot() +
+    geom_point(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    geom_smooth(mapping = aes(x = mean_cty, y = mean_hwy), method = lm) +
+    geom_label_repel(mapping = aes(x = mean_cty, y = mean_hwy, label = class))
+```
+
+```{r r20-solution}
+mpg |> 
+  group_by(class) |> 
+  summarise(mean_cty = mean(cty), mean_hwy = mean(hwy)) |> 
+  ggplot(mapping = aes(x = mean_cty, y = mean_hwy)) +
+    geom_point() +
+    geom_smooth(method = lm) +
+    geom_label_repel(mapping = aes(label = class))
+```
+
+```{r r20-check}
+"Good job! Remember that not every mapping should be a global mapping. Here, only geom_label_repel uses the label aesthetic. Hence, it should remain a local aesthetic to avoid unintended side effects, warnings, or errors."
+```
+
+
+### Exercise 16 - Global vs. Local
+
+Recreate the plot below in the most efficient way possible.
+
+```{r echo = FALSE, out.width = "80%", message = FALSE, warning = FALSE}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(color = class)) +
+  geom_smooth()
+```
+
+```{r r21, exercise = TRUE}
+
+```
+
+```{r r21-solution}
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point(mapping = aes(color = class)) +
+  geom_smooth()
+```
+
+```{r r21-check}
+"Good Job!"
+```
+
+### Global vs. Local data
+
+The `data` argument also follows a global vs. local system. If you set the `data` argument of a geom function, the geom will use the data you supply instead of the data contained in `ggplot()`. This is a convenient way to highlight groups of points.
+
+Use `data` arguments to recreate the plot below. I've started the code for you.
+
+```{r echo = FALSE, out.width = "80%", message = FALSE, warning = FALSE}
+mpg2 <- filter(mpg, class == "2seater")
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_point(data = mpg2, color = "red", size = 2)
+```
+
+```{r r22, exercise = TRUE, }
+mpg2 <- filter(mpg, class == "2seater")
+```
+
+```{r r22-solution}
+mpg2 <- filter(mpg, class == "2seater")
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_point(data = mpg2, color = "red", size = 2)
+```
+
+```{r r22-check}
+"Good Job!"
+```
+
+### Exercise 17 - Global vs. Local data
+
+Use `data` arguments to recreate the plot below.
+
+```{r echo = FALSE, out.width = "80%", message = FALSE, warning = FALSE}
+mpg3 <- filter(mpg, hwy > 40)
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_label_repel(data = mpg3, mapping = aes(label = class))
+```
+
+```{r r23, exercise = TRUE}
+
+```
+
+```{r r23-solution}
+mpg3 <- filter(mpg, hwy > 40)
+
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) +
+  geom_point() +
+  geom_label_repel(data = mpg3, mapping = aes(label = class))
+```
+
+```{r r23-check}
+"Good Job!"
+```
+
 
 
 
@@ -603,3 +922,7 @@ In the second part we had a look at boxplots. They provide an easy way to look f
 
 In boxplots, look for distributions, ranges, medians, skewness or anything else that catches your eye to change in an unusual way from distribution to distribution.
 
+
+In the final section of this tutorial, we reviewed how to create scatterplots. They are one of the most useful types of plots for data science. You will have many chances to use `geom_point()`, `geom_smooth()`, and `geom_label_repel()` in your day to day work.
+
+Additionally, we learned how to add multiple layers to a plot created with ggplot2.

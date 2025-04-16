@@ -40,9 +40,9 @@ The tutorial uses the ggplot2, ggrepel, and dplyr packages, which have been pre-
 
 ### Review 1 - geom_point()
 
-In [Visualization Basics](https://tutorials.shinyapps.io/02-Vis-Basics/), you learned how to make a scatterplot with `geom_point()`.
+In *Data and visualization*, you learned how to make a scatterplot with `geom_point()`.
 
-The code below summarises the mpg data set and begins to plot the results. Finish the plot with `geom_point()`. Put `mean_cty` on the $x$ axis and `mean_hwy` on the $y$ axis.
+The code below summarizes the mpg data set and begins to plot the results. Finish the plot with `geom_point()`. Put `mean_cty` on the $x$ axis and `mean_hwy` on the $y$ axis.
 
 ```{r r1, exercise = TRUE}
 mpg |> 
@@ -540,7 +540,7 @@ ggplot(data = diamonds) +
 
 Scatterplots are one of the most useful types of plots for data science. You will have many chances to use `geom_point()`, `geom_smooth()`, and `geom_label_repel()` in your day to day work.
 
-However, this tutor introduced important two concepts that apply to more than just scatterplots:
+However, this tutorial introduced important two concepts that apply to more than just scatterplots:
 
 * You can add **multiple layers** to any plot that you make with ggplot2
 * You can add a different **coordinate system** to any plot that you make with ggplot2
