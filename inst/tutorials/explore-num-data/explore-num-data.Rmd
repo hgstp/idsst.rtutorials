@@ -45,9 +45,7 @@ The tutorial uses the ggplot2 and dplyr packages, which have been pre-loaded for
 
 ## Histograms
 
-### Introduction
 
-![](https://vimeo.com/221607341)
 
 ### How to make a histogram
 
@@ -372,9 +370,6 @@ ggplot(data = diamonds) +
 
 ## Boxplots
 
-### Introduction
-
-![](https://vimeo.com/222358034)
 
 ### Exercise 10 - Boxplots
 

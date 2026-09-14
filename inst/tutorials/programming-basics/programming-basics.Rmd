@@ -32,9 +32,8 @@ R is easiest to use when you understand the R language. This tutorial will teach
 
 ## Functions 
 
-### Functions
 
-To begin learning about __functions__, please watch  ![](https://vimeo.com/220490105) from the RStudio Education team.
+A **function** is a reusable piece of R code that performs a particular task. You call a function by writing its name followed by parentheses, for example `sqrt(961)`. The values supplied inside the parentheses are passed to the function, and the function usually returns a result. R provides many built-in functions, and packages can add further functions. You can inspect a function by entering its name without parentheses and open its help page with `?function_name`.
 
 ### Run a function
 
@@ -107,9 +106,8 @@ sqrt(961)
 
 ## Arguments
 
-### Arguments
 
-To begin learning about function __arguments__, please watch  ![](https://vimeo.com/220490157) from the RStudio Education team.
+**Arguments** provide a function with the information it needs to do its work. They are written inside the function's parentheses and separated by commas. Arguments can be supplied by position, such as `rnorm(100, 100, 15)`, or by name, such as `rnorm(n = 100, mean = 100, sd = 15)`. Named arguments often make code easier to read. Some arguments are required, while others have default values and are optional. Use `args(function_name)` or the function's help page to see the available arguments.
 
 ### args()
 
@@ -164,9 +162,8 @@ rnorm(100, mean = 100, sd = 15)
 
 ## Objects
 
-### Objects
 
-To begin learning about __objects__, please watch  ![](https://vimeo.com/220493412) from the RStudio Education team.
+An **object** is a name that refers to a value stored in R's memory. You usually create an object with the assignment operator `<-`, as in `result <- sqrt(961)`. Once created, the object can be used in later calculations simply by writing its name. Object names should be descriptive and cannot begin with a number. R is case-sensitive, so `data`, `Data`, and `DATA` are different names. Assigning a new value to an existing name replaces the value to which that name refers.
 
 ### Object names
 
@@ -257,9 +254,8 @@ iris
 
 ## Vectors
 
-### Vectors
 
-To begin learning about __vectors__, please watch  ![](https://vimeo.com/220490316) from the RStudio Education team.
+A **vector** is R's basic structure for storing a sequence of values of the same type. You can create a vector with `c()`, for example `c(2, 4, 6)`, or use shortcuts such as `1:10` for consecutive integers. Elements are extracted with square brackets; `x[3]` selects the third element of `x`. Many R operations are vectorized, which means that one operation is applied to each element without writing an explicit loop. If vectors have different lengths, R may recycle the shorter one, so the lengths of vectors should be checked carefully.
 
 ### Create a vector
 
@@ -355,9 +351,8 @@ Predict what the code below will return. Then, look at the result.
 
 ## Types
 
-### Types
 
-To begin learning about __data types__, please watch  ![](https://vimeo.com/220490241) from the RStudio Education team.
+Every value in R has a **data type** that determines how R stores and works with it. Common atomic types include double values such as `3.5`, integers such as `3L`, character strings such as `"three"`, and logical values `TRUE` and `FALSE`. Other atomic types include complex and raw values. A vector can contain only one atomic type, so R may automatically convert values to a common type when different types are combined. Quotation marks matter: `"x"` is a character string, while `x` is interpreted as the name of an object.
 
 ### Atomic types
 
@@ -445,9 +440,8 @@ question('Which of these are object names? What is the difference between object
 
 ## Lists 
 
-### Lists
 
-To begin learning about __lists__, please watch  ![](https://vimeo.com/220490360) from the RStudio Education team.
+A **list** can store elements of different types and sizes in a single object. For example, `list(number = 1001, logical = TRUE, string = "stories")` contains a number, a logical value, and a character string. List elements can be named and accessed with `$`, such as `things$number`, or with square brackets. Data frames are a special kind of list in which each element is a column and all columns have the same number of observations.
 
 ### Lists vs. vectors
 
@@ -523,9 +517,8 @@ df$strings
 
 ## Packages
 
-### Packages
 
-To begin learning about __packages__, please watch  ![](https://vimeo.com/220490447) from the RStudio Education team.
+A **package** is a collection of R functions, data sets, and documentation created for a particular purpose. A package must first be installed, usually once, with a command such as `install.packages("dplyr")`. In each new R session, an installed package must be loaded with `library(dplyr)` before its functions are readily available. Loading a package can also load packages on which it depends. If R cannot find a function or object, check both its spelling and whether the relevant package has been loaded.
 
 ### A common error
 

@@ -705,11 +705,7 @@ The ideas that you've learned here: geoms, aesthetics, and the implied existence
 
 The Grammar of Graphics provides a systematic way to build any graph and underlies the ggplot2 package. In fact, the first two letters of ggplot2 stand for "Grammar of Graphics".
 
-### The Grammar of Graphics
 
-The best way to understand the Grammar of Graphics is to see it explained in action:
-
-![](https://vimeo.com/223812632)
 
 ### Where to from here
 
